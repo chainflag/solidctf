@@ -26,19 +26,12 @@ class Build:
 
     def _add_contract(self, build_json: Dict, alias: str = None) -> None:
         contract_name = alias or build_json["contractName"]
-        if contract_name in self._contracts and build_json["type"] == "interface":
-            return
         if build_json["sourcePath"].startswith("interface"):
             # interfaces should generate artifact in /build/interfaces/ not /build/contracts/
             return
         self._contracts[contract_name] = build_json
-        if "pcMap" not in build_json:
-            # no pcMap means build artifact is for an interface
-            return
-        if "0" in build_json["pcMap"]:
-            build_json["pcMap"] = dict((int(k), v) for k, v in build_json["pcMap"].items())
 
-    def _remove_contract(self, contract_name: str) -> None:
+    def remove(self, contract_name: str) -> None:
         key = self._stem(contract_name)
         if key in self._contracts:
             del self._contracts[key]
