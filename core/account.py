@@ -23,7 +23,7 @@ class Account:
         self._lock = threading.Lock()
         self._account = w3account
         self.address = self._account.address
-        self.private_key = self._account.key
+        self.private_key = HexBytes(self._account.key).hex()
 
     def balance(self) -> Wei:
         balance = web3.eth.get_balance(self.address)
@@ -43,9 +43,9 @@ class Account:
 
         return web3.eth.estimate_gas(tx)
 
-    def get_contract_address(self, txid: Optional[str] = None, nonce: Optional[int] = None) -> str:
-        if txid is not None:
-            tx_receipt = web3.eth.getTransactionReceipt(txid)
+    def get_contract_address(self, tx_hash: Optional[str] = None, nonce: Optional[int] = None) -> str:
+        if tx_hash is not None:
+            tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
             return EthAddress(tx_receipt['contractAddress'])
 
         if nonce is None:
