@@ -7,6 +7,8 @@ from hexbytes import HexBytes
 from brownie.convert.normalize import format_input
 from brownie.convert.utils import build_function_selector, build_function_signature, get_type_strings
 
+from core.account import Account
+
 
 class Contract:
     def __init__(self, build: Dict) -> None:
@@ -70,11 +72,11 @@ class ContractConstructor:
         else:
             return self.abi["stateMutability"] == "payable"
 
-    def encode_input(self, *args: tuple) -> str:
+    def encode_input(self, *args: Tuple) -> str:
         bytecode = self._parent.bytecode
         data = format_input(self.abi, args)
         types_list = get_type_strings(self.abi["inputs"])
         return bytecode + eth_abi.encode_abi(types_list, data).hex()
 
-    def estimate_gas(self) -> int:
-        pass
+    def estimate_gas(self, *args: Tuple) -> int:
+        return Account.estimate_gas(data=self.encode_input(*args))

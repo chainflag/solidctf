@@ -33,6 +33,16 @@ class Account:
     def nonce(self) -> int:
         return web3.eth.get_transaction_count(self.address)
 
+    @staticmethod
+    def estimate_gas(to: str = None, amount: int = 0, data: str = None) -> int:
+        tx: Dict = {
+            "to": to,
+            "value": Wei(amount),
+            "data": HexBytes(data or ""),
+        }
+
+        return web3.eth.estimate_gas(tx)
+
     def get_contract_address(self, txid: Optional[str] = None, nonce: Optional[int] = None) -> str:
         if txid is not None:
             tx_receipt = web3.eth.getTransactionReceipt(txid)
@@ -58,14 +68,13 @@ class Account:
         data = contract.deploy.encode_input(*args)
         with self._lock:
             try:
-                gas_price = gas_price or web3.eth.gas_price
-                gas_limit = Wei(gas_limit) or self.estimate_gas(None, amount, gas_price, data or "")
+                gas_limit = Wei(gas_limit) or self.estimate_gas(None, amount, data or "")
                 tx_hash = self._transact(  # type: ignore
                     {
                         "from": self.address,
                         "value": Wei(amount),
                         "nonce": nonce if nonce is not None else self.nonce,
-                        "gasPrice": gas_price,
+                        "gasPrice": gas_price if gas_price is not None else web3.eth.gas_price,
                         "gas": gas_limit,
                         "data": HexBytes(data),
                     },
@@ -76,20 +85,6 @@ class Account:
                     raise exc from None
 
         return tx_hash
-
-    def estimate_gas(
-            self, to: str = None, amount: int = 0, gas_price: int = None, data: str = None
-    ) -> int:
-        tx: Dict = {
-            "from": self.address,
-            "to": to,
-            "value": Wei(amount),
-            "data": HexBytes(data or ""),
-        }
-        if gas_price is not None:
-            tx["gasPrice"] = gas_price
-
-        return web3.eth.estimate_gas(tx)
 
     def _transact(self, tx: Dict) -> str:
         tx["chainId"] = web3.eth.chain_id
