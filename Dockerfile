@@ -17,7 +17,8 @@ COPY . .
 COPY ./ctf.xinetd /etc/xinetd.d/ctf
 
 RUN chmod +x ./start.sh
+RUN cd challenge && brownie compile --all && cd ../
 
 EXPOSE 20000
 
-CMD ["./start.sh"]
+CMD ["/opt/start.sh"]
