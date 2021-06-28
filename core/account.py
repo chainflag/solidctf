@@ -2,11 +2,11 @@
 import threading
 import rlp
 
-from hexbytes import HexBytes
 from typing import Any, Dict, Optional, Tuple, Union
 
-from web3 import Web3
 from eth_utils import keccak
+from hexbytes import HexBytes
+from web3 import Web3
 from brownie.convert import EthAddress, Wei
 from brownie.exceptions import VirtualMachineError
 
@@ -36,7 +36,7 @@ class Account:
     def get_contract_address(self, txid: Optional[str] = None, nonce: Optional[int] = None) -> str:
         if txid is not None:
             tx_receipt = web3.eth.getTransactionReceipt(txid)
-            return tx_receipt['contractAddress']
+            return EthAddress(tx_receipt['contractAddress'])
 
         if nonce is None:
             nonce = self.nonce

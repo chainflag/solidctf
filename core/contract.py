@@ -2,6 +2,7 @@
 import eth_abi
 
 from typing import Any, Dict, List, Optional, Union, Tuple
+
 from hexbytes import HexBytes
 from brownie.convert.normalize import format_input
 from brownie.convert.utils import build_function_selector, build_function_signature, get_type_strings
