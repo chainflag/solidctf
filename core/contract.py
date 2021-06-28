@@ -14,6 +14,7 @@ class Contract:
     def __init__(self, build: Dict) -> None:
         self._build = build.copy()
         self.bytecode = build["bytecode"]
+        self.source = build["source"]
         self.deploy = ContractConstructor(self, self._name)
         self.selectors = {
             build_function_selector(i): i["name"] for i in self.abi if i["type"] == "function"
