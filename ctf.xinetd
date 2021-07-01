@@ -9,7 +9,7 @@ service ctf
     port        = 20000
     bind        = 0.0.0.0
     server      = /usr/local/bin/python3
-    server_args = /opt/server/main.py
+    server_args = /opt/main.py
     flags       = REUSE
     per_source  = 5 # the maximum instances of this service per source IP address
 }
