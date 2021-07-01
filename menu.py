@@ -24,7 +24,7 @@ You can finish this challenge in a lot of connections.
 
 class _MenuBase:
     def __init__(self) -> None:
-        self._build: Build = Build(os.path.join(os.path.dirname(__file__), "challenge"))
+        self._build: Build = Build(os.path.dirname(__file__))
         self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
                               self.get_contract_source]
 

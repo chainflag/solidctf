@@ -16,7 +16,7 @@ service ctf
     port            = ${PORT}
     bind            = 0.0.0.0
     server          = /usr/local/bin/python3
-    server_args     = /home/ctf/main.py
+    server_args     = /opt/main.py
     per_source      = ${PER_SOURCE:-4}
     cps             = ${CPS_RATE:-200} ${CPS_DELAY:-5}
     rlimit_cpu      = ${RLIMIT_CPU:-5}
