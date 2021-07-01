@@ -3,9 +3,9 @@ import sys
 
 from typing import List, Dict
 
-from core.account import Account
-from core.build import Build
-from core.contract import Contract
+from helper.account import Account
+from helper.build import Build
+from helper.contract import Contract
 
 menu: str = '''
 We design a pretty easy contract game. Enjoy it!
