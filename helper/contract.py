@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import eth_abi
 
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Dict, List, Optional, Union, Tuple
 
-from hexbytes import HexBytes
 from brownie.convert.normalize import format_input
-from brownie.convert.utils import build_function_selector, build_function_signature, get_type_strings
+from brownie.convert.utils import build_function_selector, get_type_strings
 
 from helper.account import Account
 
@@ -30,29 +29,6 @@ class Contract:
     def get_method(self, calldata: str) -> Optional[str]:
         sig = calldata[:10].lower()
         return self.selectors.get(sig)
-
-    def decode_input(self, calldata: Union[str, bytes]) -> Tuple[str, Any]:
-        if not isinstance(calldata, HexBytes):
-            calldata = HexBytes(calldata)
-
-        abi = next(
-            (
-                i
-                for i in self.abi
-                if i["type"] == "function" and build_function_selector(i) == calldata[:4].hex()
-            ),
-            None,
-        )
-        if abi is None:
-            raise ValueError("Four byte selector does not match the ABI for this contract")
-
-        function_sig = build_function_signature(abi)
-
-        types_list = get_type_strings(abi["inputs"])
-        result = eth_abi.decode_abi(types_list, calldata[4:])
-        input_args = format_input(abi, result)
-
-        return function_sig, input_args
 
 
 class ContractConstructor:
