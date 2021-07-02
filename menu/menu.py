@@ -5,4 +5,4 @@ from menu.base import _MenuBase
 
 class Menu(_MenuBase):
     def __init__(self, auth: Paseto, build: Build) -> None:
-        _MenuBase.__init__(self, auth, build)
+        super().__init__(auth, build)
