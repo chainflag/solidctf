@@ -12,6 +12,9 @@ class Build:
         self._build_path: Path = self._project_path.joinpath("build")
         self._load()
 
+    def __getitem__(self, contract_name: str) -> Dict:
+        return self._contracts[contract_name]
+
     def _load(self) -> None:
         for path in list(self._build_path.glob("contracts/*.json")):
             try:
@@ -31,20 +34,9 @@ class Build:
             return
         self._contracts[contract_name] = build_json
 
-    def remove(self, contract_name: str) -> None:
-        key = self._stem(contract_name)
-        if key in self._contracts:
-            del self._contracts[key]
-
-    def get(self, contract_name: str) -> Dict:
-        key = self._stem(contract_name)
-        return self._contracts[key]
-
     def items(self) -> List:
         return list(self._contracts.items())
 
     def contains(self, contract_name: str) -> bool:
-        return self._stem(contract_name) in list(self._contracts)
+        return contract_name in list(self._contracts)
 
-    def _stem(self, contract_name: str) -> str:
-        return contract_name.replace(".json", "")

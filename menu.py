@@ -1,7 +1,7 @@
 import os
 import sys
 
-from typing import List, Dict
+from typing import List
 
 from helper.account import Account
 from helper.build import Build
@@ -25,38 +25,22 @@ You can finish this challenge in a lot of connections.
 class _MenuBase:
     def __init__(self) -> None:
         self._build: Build = Build(os.path.dirname(__file__))
+        self._contract: Contract = Contract(self.build.items()[0][1])
         self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
                               self.get_contract_source]
 
     def __str__(self) -> str:
         return menu
 
-    def get_build_result(self, contract_name: str) -> Dict:
-        return self._build.get(contract_name)
+    @property
+    def build(self) -> Build:
+        return self._build
 
     def select_option(self, choice: int) -> None:
         if choice <= 0 or choice > 4:
             print("Invalid option")
             sys.exit(0)
         self._option[choice]()
-
-    def create_game_account(self) -> None:
-        pass
-
-    def deploy_contract(self) -> None:
-        pass
-
-    def request_flag(self) -> None:
-        pass
-
-    def get_contract_source(self) -> None:
-        pass
-
-
-class Menu(_MenuBase):
-    def __init__(self) -> None:
-        super().__init__()
-        self._contract: Contract = Contract(super().get_build_result("Greeter"))
 
     def create_game_account(self) -> None:
         account: Account = Account()
@@ -78,4 +62,15 @@ class Menu(_MenuBase):
         pass
 
     def get_contract_source(self) -> None:
-        print(self._contract.source)
+        for key, data in self.build.items():
+            print(f"{key}.sol")
+            print(data["source"])
+
+
+class Menu(_MenuBase):
+    def __init__(self) -> None:
+        super().__init__()
+        self._contract: Contract = Contract(super().build["Greeter"])
+
+    def request_flag(self) -> None:
+        pass
