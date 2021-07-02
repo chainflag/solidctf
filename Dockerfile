@@ -4,7 +4,7 @@ WORKDIR /opt
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    build-essential xinetd tini \
+    build-essential libsodium-dev tini xinetd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -4,3 +4,4 @@ web3~=5.18.0
 pytest~=6.2.3
 rlp~=1.2.0
 hexbytes~=0.2.1
+paseto~=0.0.5
