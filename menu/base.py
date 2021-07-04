@@ -2,6 +2,8 @@ import sys
 
 from typing import List
 
+from web3 import Web3
+
 from config import Config
 from helper.account import Account
 from helper.auth import Paseto
@@ -16,7 +18,8 @@ class _MenuBase:
         self._config: Config = config
         self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
                               self.get_contract_source]
-        self._contract: Contract = Contract(self._build.items()[0][1])
+        self._web3: Web3 = Web3(Web3.HTTPProvider(self._config.web3_provider))
+        self._contract: Contract = Contract(self._web3, self._build.items()[0][1])
 
     def __str__(self) -> str:
         return self._config.banner
@@ -39,7 +42,7 @@ class _MenuBase:
     def deploy_contract(self) -> None:
         token = input("[-]input your token: ")
         message: dict = self._auth.parse_token(token.strip())
-        account: Account = Account(message["private_key"])
+        account: Account = Account(self._web3, message["private_key"])
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(0)
