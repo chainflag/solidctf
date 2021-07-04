@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Tuple
 
 
-@dataclass(eq=False)
+@dataclass(eq=False, frozen=True)
 class Config:
     banner: str
     secret: bytes
