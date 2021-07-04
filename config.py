@@ -1,0 +1,26 @@
+import yaml
+
+from binascii import unhexlify
+from dataclasses import dataclass
+from typing import Tuple
+
+
+@dataclass(eq=False)
+class Config:
+    banner: str
+    secret: bytes
+    exp_seconds: int
+    web3_provider: str
+    constructor_args: Tuple
+
+
+def parse_config(path: str) -> Config:
+    with open(path, "r") as f:
+        config = yaml.safe_load(f)
+
+    _config = Config(banner=config["banner"],
+                     secret=unhexlify(config["auth_token"]["secret"].encode("ascii")),
+                     exp_seconds=config["auth_token"]["exp_seconds"],
+                     web3_provider=config["contract_deploy"]["web3_provider"],
+                     constructor_args=config["contract_deploy"]["constructor_args"])
+    return _config

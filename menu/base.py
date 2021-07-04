@@ -2,36 +2,24 @@ import sys
 
 from typing import List
 
+from config import Config
 from helper.account import Account
 from helper.auth import Paseto
 from helper.build import Build
 from helper.contract import Contract
 
-menu: str = '''
-We design a pretty easy contract game. Enjoy it!
-1. Create a game account
-2. Deploy a game contract
-3. Request for flag
-4. Get source code
-Option 1, get an account which will be used to deploy the contract;
-Before option 2, please transfer some eth to this account (for gas);
-Option 2, the robot will use the account to deploy the contract for the problem;
-Option 3, use this option to obtain the flag after the event is triggered.
-Option 4, use this option to get source code.
-You can finish this challenge in a lot of connections.
-'''
-
 
 class _MenuBase:
-    def __init__(self, auth: Paseto, build: Build) -> None:
+    def __init__(self, auth: Paseto, build: Build, config: Config) -> None:
         self._auth: Paseto = auth
         self._build: Build = build
-        self._contract: Contract = Contract(self._build.items()[0][1])
+        self._config: Config = config
         self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
                               self.get_contract_source]
+        self._contract: Contract = Contract(self._build.items()[0][1])
 
     def __str__(self) -> str:
-        return menu
+        return self._config.banner
 
     def select_option(self, choice: int) -> None:
         if choice <= 0 or choice > 4:

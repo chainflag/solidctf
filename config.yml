@@ -1,0 +1,20 @@
+banner: |
+  We design a pretty easy contract game. Enjoy it!
+  1. Create a game account
+  2. Deploy a game contract
+  3. Request for flag
+  4. Get source code
+  Option 1, get an account which will be used to deploy the contract;
+  Before option 2, please transfer some eth to this account (for gas);
+  Option 2, the robot will use the account to deploy the contract for the problem;
+  Option 3, use this option to obtain the flag after the event is triggered.
+  Option 4, use this option to get source code.
+  You can finish this challenge in a lot of connections.
+
+auth_token:
+  secret: "303870ada9496c230724933abab5df17cec51b2c548619a6ad6d574a7b0d6e37" # secrets.token_hex(32)
+  exp_seconds: 7200
+
+contract_deploy:
+  web3_provider: "https://ropsten.infura.io/"
+  constructor_args:
