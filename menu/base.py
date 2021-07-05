@@ -32,8 +32,8 @@ class _MenuBase:
 
     def create_game_account(self) -> None:
         account: Account = Account()
-        print("[+]Your game account:{}".format(account.address))
         token: str = self._auth.create_token({"private_key": account.private_key})
+        print("[+]Your game account: {}".format(account.address))
         print("[+]token: {}".format(token))
         estimate_gas: int = self._contract.deploy.estimate_gas("HelloWorld")
         print("[+]Deploy will cost {} gas".format(estimate_gas))
@@ -48,15 +48,14 @@ class _MenuBase:
             sys.exit(0)
 
         contract_addr: str = account.get_contract_address()
-        new_token: str = self._auth.create_token({"contract_addr": contract_addr})
-        print("[+]new token: {}".format(new_token))
-        print("[+]Contract address: {}".format(contract_addr))
         tx_hash: str = self._contract.deploy("HelloWorld", sender=account)
+        print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
+        print("[+]deployed token: {}".format(self._auth.create_token({"contract_addr": contract_addr})))
 
     def request_flag(self) -> None:
-        new_token = input("[-]input your new token: ")
-        message: dict = self._auth.parse_token(new_token.strip())
+        deployed_token = input("[-]input your deployed token: ")
+        message: dict = self._auth.parse_token(deployed_token.strip())
         res = self._contract.at(message["contract_addr"]).isSolved().call()
         if res:
             print("[+]flag: {}".format(self._config.flag))
