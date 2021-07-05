@@ -8,7 +8,6 @@ from eth_typing import ChecksumAddress
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
-from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 
 
@@ -25,9 +24,9 @@ class Account:
         self.address = self._account.address
         self.private_key = HexBytes(self._account.key).hex()
 
-    def balance(self) -> Wei:
+    def balance(self) -> int:
         balance = self._web3.eth.get_balance(self.address)
-        return Wei(balance)
+        return balance
 
     @property
     def nonce(self) -> int:
