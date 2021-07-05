@@ -48,7 +48,7 @@ class _MenuBase:
             sys.exit(0)
 
         contract_addr: str = account.get_contract_address()
-        new_token: str = self._auth.create_token({"private_key": account.private_key, "contract_addr": contract_addr})
+        new_token: str = self._auth.create_token({"contract_addr": contract_addr})
         print("[+]new token: {}".format(new_token))
         print("[+]Contract address: {}".format(contract_addr))
         tx_hash: str = self._contract.deploy("HelloWorld", sender=account)
