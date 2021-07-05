@@ -4,7 +4,6 @@ from typing import Dict, List, Optional, Tuple
 from eth_typing import ChecksumAddress
 from web3 import Web3, contract
 from brownie.convert import Wei
-from brownie.convert.utils import build_function_selector
 
 from helper.account import Account
 
@@ -15,10 +14,6 @@ class Contract:
         self._build = build.copy()
         self.bytecode = build["bytecode"]
         self.deploy = ContractConstructor(self)
-
-        self.selectors = {
-            build_function_selector(i): i["name"] for i in self.abi if i["type"] == "function"
-        }
 
     @property
     def abi(self) -> List:
@@ -33,10 +28,6 @@ class Contract:
             address=address,
             abi=self.abi
         ).functions
-
-    def get_method(self, calldata: str) -> Optional[str]:
-        sig = calldata[:10].lower()
-        return self.selectors.get(sig)
 
 
 class ContractConstructor:
