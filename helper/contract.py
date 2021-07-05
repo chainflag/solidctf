@@ -41,19 +41,19 @@ class ContractConstructor:
 
     def __call__(
             self,
-            account: Account,
             *args: Tuple,
             amount: int = 0,
+            sender: Account,
             gas_limit: Optional[int] = None,
             gas_price: Optional[int] = None,
             nonce: Optional[int] = None,
     ) -> str:
         tx: Dict = self._build_transaction(*args)
-        return account.transact(  # type: ignore
+        return sender.transact(
             {
-                "from": account.address,
+                "from": sender.address,
                 "value": Wei(amount),
-                "nonce": nonce if nonce is not None else account.nonce,
+                "nonce": nonce if nonce is not None else sender.nonce,
                 "gasPrice": Wei(gas_price) or tx["gasPrice"],
                 "gas": Wei(gas_limit) or tx["gas"],
                 "data": tx["data"],
