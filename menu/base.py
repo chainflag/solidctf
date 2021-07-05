@@ -2,6 +2,8 @@ import sys
 
 from typing import List
 
+from web3 import Web3
+
 from config import Config
 from helper.account import Account
 from helper.auth import Paseto
@@ -16,7 +18,8 @@ class _MenuBase:
         self._config: Config = config
         self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
                               self.get_contract_source]
-        self._contract: Contract = Contract(self._build.items()[0][1])
+        self._web3: Web3 = Web3(Web3.HTTPProvider(self._config.web3_provider))
+        self._contract: Contract = Contract(self._web3, self._build.items()[0][1])
 
     def __str__(self) -> str:
         return self._config.banner
@@ -29,8 +32,8 @@ class _MenuBase:
 
     def create_game_account(self) -> None:
         account: Account = Account()
-        print("[+]Your game account:{}".format(account.address))
         token: str = self._auth.create_token({"private_key": account.private_key})
+        print("[+]Your game account: {}".format(account.address))
         print("[+]token: {}".format(token))
         estimate_gas: int = self._contract.deploy.estimate_gas("HelloWorld")
         print("[+]Deploy will cost {} gas".format(estimate_gas))
@@ -39,22 +42,25 @@ class _MenuBase:
     def deploy_contract(self) -> None:
         token = input("[-]input your token: ")
         message: dict = self._auth.parse_token(token.strip())
-        account: Account = Account(message["private_key"])
+        account: Account = Account(self._web3, message["private_key"])
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(0)
 
         contract_addr: str = account.get_contract_address()
-        new_token: str = self._auth.create_token({"private_key": account.private_key, "contract_addr": contract_addr})
-        print("[+]new token: {}".format(new_token))
+        tx_hash: str = self._contract.deploy("HelloWorld", sender=account)
         print("[+]Contract address: {}".format(contract_addr))
-        tx_hash: str = account.deploy(self._contract, "HelloWorld")
         print("[+]Transaction hash: {}".format(tx_hash))
+        print("[+]deployed token: {}".format(self._auth.create_token({"contract_addr": contract_addr})))
 
     def request_flag(self) -> None:
-        new_token = input("[-]input your new token: ")
-        message: dict = self._auth.parse_token(new_token.strip())
-        print(message["contract_addr"])
+        deployed_token = input("[-]input your deployed token: ")
+        message: dict = self._auth.parse_token(deployed_token.strip())
+        res = self._contract.at(message["contract_addr"]).isSolved().call()
+        if res:
+            print("[+]flag: {}".format(self._config.flag))
+        else:
+            print("[+]sorry, it seems that you have not solved this~~~~")
 
     def get_contract_source(self) -> None:
         for key, data in self._build.items():

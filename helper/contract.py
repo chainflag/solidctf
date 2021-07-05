@@ -1,58 +1,65 @@
 #!/usr/bin/env python3
-import eth_abi
+from typing import Dict, List, Optional, Tuple
 
-from typing import Dict, List, Optional, Union, Tuple
-
-from brownie.convert.normalize import format_input
-from brownie.convert.utils import build_function_selector, get_type_strings
+from eth_typing import ChecksumAddress
+from web3 import Web3, contract
+from brownie.convert import Wei
 
 from helper.account import Account
 
 
 class Contract:
-    def __init__(self, build: Dict) -> None:
+    def __init__(self, web3: Web3, build: Dict) -> None:
+        self.web3 = web3
         self._build = build.copy()
         self.bytecode = build["bytecode"]
-        self.deploy = ContractConstructor(self, self._name)
-        self.selectors = {
-            build_function_selector(i): i["name"] for i in self.abi if i["type"] == "function"
-        }
+        self.deploy = ContractConstructor(self)
 
     @property
     def abi(self) -> List:
         return self._build["abi"]
 
     @property
-    def _name(self) -> str:
+    def name(self) -> str:
         return self._build["contractName"]
 
-    def get_method(self, calldata: str) -> Optional[str]:
-        sig = calldata[:10].lower()
-        return self.selectors.get(sig)
+    def at(self, address: ChecksumAddress) -> contract.ContractFunctions:
+        return self.web3.eth.contract(
+            address=address,
+            abi=self.abi
+        ).functions
 
 
 class ContractConstructor:
-    def __init__(self, parent: "Contract", name: str) -> None:
-        self._parent = parent
-        try:
-            self.abi = next(i for i in parent.abi if i["type"] == "constructor")
-            self.abi["name"] = "constructor"
-        except Exception:
-            self.abi = {"inputs": [], "name": "constructor", "type": "constructor"}
-        self._name = name
+    def __init__(self, parent: "Contract") -> None:
+        self._instance = parent.web3.eth.contract(
+            abi=parent.abi,
+            bytecode=parent.bytecode
+        )
 
-    @property
-    def payable(self) -> Union[list, str, bool]:
-        if "payable" in self.abi:
-            return self.abi["payable"]
-        else:
-            return self.abi["stateMutability"] == "payable"
+    def __call__(
+            self,
+            *args: Tuple,
+            amount: int = 0,
+            sender: Account,
+            gas_limit: Optional[int] = None,
+            gas_price: Optional[int] = None,
+            nonce: Optional[int] = None,
+    ) -> str:
+        tx: Dict = self._build_transaction(*args)
+        return sender.transact(
+            {
+                "from": sender.address,
+                "value": Wei(amount),
+                "nonce": nonce if nonce is not None else sender.nonce,
+                "gasPrice": Wei(gas_price) or tx["gasPrice"],
+                "gas": Wei(gas_limit) or tx["gas"],
+                "data": tx["data"],
+            },
+        )
 
-    def encode_input(self, *args: Tuple) -> str:
-        bytecode = self._parent.bytecode
-        data = format_input(self.abi, args)
-        types_list = get_type_strings(self.abi["inputs"])
-        return bytecode + eth_abi.encode_abi(types_list, data).hex()
+    def _build_transaction(self, *args: Tuple) -> Dict:
+        return self._instance.constructor(*args).buildTransaction()
 
     def estimate_gas(self, *args: Tuple) -> int:
-        return Account.estimate_gas(data=self.encode_input(*args))
+        return self._instance.constructor(*args).estimateGas()

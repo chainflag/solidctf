@@ -9,10 +9,10 @@ def greeter_instance(Greeter, accounts):
     yield m
 
 
-def test_initial_greeting(greeter_instance):
+def test_initial(greeter_instance):
     assert greeter_instance.greet() == "HelloWorld"
 
 
-def test_set_greeting(greeter_instance, accounts):
+def test_solve(greeter_instance, accounts):
     greeter_instance.setGreeting("HelloChainFlag", {'from': accounts[0]})
-    assert greeter_instance.greet() == "HelloChainFlag"
+    assert greeter_instance.isSolved() == True
