@@ -2,7 +2,7 @@
 import threading
 import rlp
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Union
 
 from eth_utils import keccak
 from hexbytes import HexBytes
@@ -45,36 +45,15 @@ class Account:
 
         return EthAddress(keccak(raw)[12:])
 
-    def deploy(
-            self,
-            contract: Any,
-            *args: Tuple,
-            amount: int = 0,
-            gas_limit: Optional[int] = None,
-            gas_price: Optional[int] = None,
-            nonce: Optional[int] = None,
-    ) -> str:
-        construct_tx: Dict = contract.deploy.build_transaction(*args)
+    def transact(self, tx: Dict) -> str:
+        tx["chainId"] = self._web3.eth.chain_id
         with self._lock:
             try:
-                tx_hash = self._transact(  # type: ignore
-                    {
-                        "from": self.address,
-                        "value": Wei(amount),
-                        "nonce": nonce if nonce is not None else self.nonce,
-                        "gasPrice": gas_price if gas_price is not None else construct_tx["gasPrice"],
-                        "gas": Wei(gas_limit) or construct_tx["gas"],
-                        "data": construct_tx["data"],
-                    },
-                )
+                signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
+                txid = self._web3.eth.send_raw_transaction(signed_tx)
             except ValueError as e:
                 exc = VirtualMachineError(e)
                 if not hasattr(exc, "txid"):
                     raise exc from None
 
-        return tx_hash
-
-    def _transact(self, tx: Dict) -> str:
-        tx["chainId"] = self._web3.eth.chain_id
-        signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
-        return self._web3.eth.send_raw_transaction(signed_tx).hex()
+        return txid.hex()

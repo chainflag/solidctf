@@ -51,7 +51,7 @@ class _MenuBase:
         new_token: str = self._auth.create_token({"private_key": account.private_key, "contract_addr": contract_addr})
         print("[+]new token: {}".format(new_token))
         print("[+]Contract address: {}".format(contract_addr))
-        tx_hash: str = account.deploy(self._contract, "HelloWorld")
+        tx_hash: str = self._contract.deploy(account, "HelloWorld")
         print("[+]Transaction hash: {}".format(tx_hash))
 
     def request_flag(self) -> None:
