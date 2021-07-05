@@ -57,7 +57,11 @@ class _MenuBase:
     def request_flag(self) -> None:
         new_token = input("[-]input your new token: ")
         message: dict = self._auth.parse_token(new_token.strip())
-        print(message["contract_addr"])
+        res = self._contract.at(message["contract_addr"]).isSolved().call()
+        if res:
+            print("[+]flag: {}".format(self._config.flag))
+        else:
+            print("[+]sorry, it seems that you have not solved this~~~~")
 
     def get_contract_source(self) -> None:
         for key, data in self._build.items():

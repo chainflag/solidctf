@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from typing import Dict, List, Optional, Tuple
 
-from web3 import Web3
+from eth_typing import ChecksumAddress
+from web3 import Web3, contract
 from brownie.convert import Wei
 from brownie.convert.utils import build_function_selector
 
@@ -26,6 +27,12 @@ class Contract:
     @property
     def name(self) -> str:
         return self._build["contractName"]
+
+    def at(self, address: ChecksumAddress) -> contract.ContractFunctions:
+        return self.web3.eth.contract(
+            address=address,
+            abi=self.abi
+        ).functions
 
     def get_method(self, calldata: str) -> Optional[str]:
         sig = calldata[:10].lower()

@@ -4,10 +4,11 @@ import rlp
 
 from typing import Dict, Optional, Union
 
-from eth_utils import keccak
+from eth_typing import ChecksumAddress
+from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
-from brownie.convert import EthAddress, Wei
+from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 
 
@@ -32,10 +33,10 @@ class Account:
     def nonce(self) -> int:
         return self._web3.eth.get_transaction_count(self.address)
 
-    def get_contract_address(self, tx_hash: Optional[str] = None, nonce: Optional[int] = None) -> str:
+    def get_contract_address(self, tx_hash: Optional[str] = None, nonce: Optional[int] = None) -> ChecksumAddress:
         if tx_hash is not None:
             tx_receipt = self._web3.eth.get_transaction_receipt(tx_hash)
-            return EthAddress(tx_receipt['contractAddress'])
+            return to_checksum_address(tx_receipt['contractAddress'])
 
         if nonce is None:
             nonce = self.nonce
@@ -43,7 +44,8 @@ class Account:
         address = HexBytes(self.address)
         raw = rlp.encode([address, nonce])
 
-        return EthAddress(keccak(raw)[12:])
+        contract_addr = HexBytes(keccak(raw)[12:]).hex()
+        return to_checksum_address(contract_addr)
 
     def transact(self, tx: Dict) -> str:
         tx["chainId"] = self._web3.eth.chain_id
