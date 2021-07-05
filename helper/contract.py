@@ -32,7 +32,7 @@ class Contract:
 
 class ContractConstructor:
     def __init__(self, parent: "Contract") -> None:
-        self.instance = parent.web3.eth.contract(
+        self._instance = parent.web3.eth.contract(
             abi=parent.abi,
             bytecode=parent.bytecode
         )
@@ -59,7 +59,7 @@ class ContractConstructor:
         )
 
     def _build_transaction(self, *args: Tuple) -> Dict:
-        return self.instance.constructor(*args).buildTransaction()
+        return self._instance.constructor(*args).buildTransaction()
 
     def estimate_gas(self, *args: Tuple) -> int:
-        return self.instance.constructor(*args).estimateGas()
+        return self._instance.constructor(*args).estimateGas()
