@@ -2,7 +2,7 @@ import yaml
 
 from binascii import unhexlify
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Any
 
 
 @dataclass(eq=False, frozen=True)
@@ -12,7 +12,7 @@ class Config:
     secret: bytes
     exp_seconds: int
     web3_provider: str
-    constructor_args: Tuple
+    constructor_args: Any
 
 
 def parse_config(path: str) -> Config:

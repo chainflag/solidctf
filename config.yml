@@ -19,3 +19,4 @@ auth_token:
 contract_deploy:
   web3_provider: "https://ropsten.infura.io/"
   constructor_args:
+    - helloworld

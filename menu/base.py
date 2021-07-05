@@ -35,7 +35,7 @@ class _MenuBase:
         token: str = self._auth.create_token({"private_key": account.private_key})
         print("[+]Your game account: {}".format(account.address))
         print("[+]token: {}".format(token))
-        estimate_gas: int = self._contract.deploy.estimate_gas("HelloWorld")
+        estimate_gas: int = self._contract.deploy.estimate_gas(*self._config.constructor_args)
         print("[+]Deploy will cost {} gas".format(estimate_gas))
         print("[+]Make sure that you have enough ether to deploy!!!!!!")
 
@@ -48,7 +48,7 @@ class _MenuBase:
             sys.exit(0)
 
         contract_addr: str = account.get_contract_address()
-        tx_hash: str = self._contract.deploy("HelloWorld", sender=account)
+        tx_hash: str = self._contract.deploy(*self._config.constructor_args, sender=account)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
         print("[+]deployed token: {}".format(self._auth.create_token({"contract_addr": contract_addr})))

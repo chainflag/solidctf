@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Any
 
 from eth_typing import ChecksumAddress
 from web3 import Web3, contract
@@ -39,14 +39,14 @@ class ContractConstructor:
 
     def __call__(
             self,
-            *args: Tuple,
+            *args: Any,
             amount: int = 0,
             sender: Account,
             gas_limit: Optional[int] = None,
             gas_price: Optional[int] = None,
             nonce: Optional[int] = None,
     ) -> str:
-        tx: Dict = self._build_transaction(*args)
+        tx: Dict = self._instance.constructor(*args).buildTransaction()
         return sender.transact(
             {
                 "from": sender.address,
@@ -58,8 +58,5 @@ class ContractConstructor:
             },
         )
 
-    def _build_transaction(self, *args: Tuple) -> Dict:
-        return self._instance.constructor(*args).buildTransaction()
-
-    def estimate_gas(self, *args: Tuple) -> int:
+    def estimate_gas(self, *args: Any) -> int:
         return self._instance.constructor(*args).estimateGas()
