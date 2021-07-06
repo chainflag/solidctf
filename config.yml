@@ -13,7 +13,7 @@ banner: |
   You can finish this challenge in a lot of connections.
 
 auth_token:
-  secret: "303870ada9496c230724933abab5df17cec51b2c548619a6ad6d574a7b0d6e37" # secrets.token_hex(32)
+  secret: 
   exp_seconds: 7200
 
 contract_deploy:
