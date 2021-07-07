@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for f in "$(pwd)"/startup/*; do
+for f in "$(pwd)"/scripts/*; do
     echo "[+] running $f"
     bash "$f"
 done
