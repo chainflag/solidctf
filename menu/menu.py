@@ -1,7 +1,6 @@
 from config import Config
-from helper.auth import Paseto
-from helper.build import Build
 from menu.base import _MenuBase
+from packages.utils import Build, Paseto
 
 
 class Menu(_MenuBase):

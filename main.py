@@ -2,10 +2,8 @@
 import os
 
 from config import parse_config
-from helper.auth import Paseto
-from helper.build import Build
-from menu.menu import Menu
-
+from menu import Menu
+from packages.utils import Build, Paseto
 
 if __name__ == '__main__':
     config = parse_config(os.path.join(os.path.dirname(__file__), "config.yml"))

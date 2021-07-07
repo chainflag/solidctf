@@ -5,10 +5,8 @@ from typing import List
 from web3 import Web3
 
 from config import Config
-from helper.account import Account
-from helper.auth import Paseto
-from helper.build import Build
-from helper.contract import Contract
+from packages.eth import Account, Contract
+from packages.utils import Build, Paseto
 
 
 class _MenuBase:
