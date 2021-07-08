@@ -11,16 +11,16 @@ from packages.utils import Build, Paseto
 
 class _MenuBase:
     def __init__(self, auth: Paseto, build: Build, config: Config) -> None:
-        self._auth: Paseto = auth
-        self._build: Build = build
-        self._config: Config = config
-        self._option: List = [None, self.create_game_account, self.deploy_contract, self.request_flag,
-                              self.get_contract_source]
-        self._web3: Web3 = Web3(Web3.HTTPProvider(self._config.web3_provider))
-        self._contract: Contract = Contract(self._web3, self._build.items()[0][1])
+        self.auth: Paseto = auth
+        self.build: Build = build
+        self.config: Config = config
+        self.web3: Web3 = Web3(Web3.HTTPProvider(self.config.web3_provider))
+        self._contract: Contract = Contract(self.web3, self.build.items()[0][1])
+        self._option: List = [None, self._create_game_account, self._deploy_contract, self._request_flag,
+                              self._get_contract_source]
 
     def __str__(self) -> str:
-        return self._config.banner
+        return self.config.banner
 
     def select_option(self, choice: int) -> None:
         if choice <= 0 or choice > 4:
@@ -28,39 +28,39 @@ class _MenuBase:
             sys.exit(0)
         self._option[choice]()
 
-    def create_game_account(self) -> None:
+    def _create_game_account(self) -> None:
         account: Account = Account()
-        token: str = self._auth.create_token({"private_key": account.private_key})
+        token: str = self.auth.create_token({"private_key": account.private_key})
         print("[+]Your game account: {}".format(account.address))
         print("[+]token: {}".format(token))
-        estimate_gas: int = self._contract.deploy.estimate_gas(*self._config.constructor_args)
+        estimate_gas: int = self._contract.deploy.estimate_gas(*self.config.constructor_args)
         print("[+]Deploy will cost {} gas".format(estimate_gas))
         print("[+]Make sure that you have enough ether to deploy!!!!!!")
 
-    def deploy_contract(self) -> None:
+    def _deploy_contract(self) -> None:
         token = input("[-]input your token: ")
-        message: dict = self._auth.parse_token(token.strip())
-        account: Account = Account(self._web3, message["private_key"])
+        message: dict = self.auth.parse_token(token.strip())
+        account: Account = Account(self.web3, message["private_key"])
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(0)
 
         contract_addr: str = account.get_contract_address()
-        tx_hash: str = self._contract.deploy(*self._config.constructor_args, sender=account)
+        tx_hash: str = self._contract.deploy(*self.config.constructor_args, sender=account)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
-        print("[+]deployed token: {}".format(self._auth.create_token({"contract_addr": contract_addr})))
+        print("[+]deployed token: {}".format(self.auth.create_token({"contract_addr": contract_addr})))
 
-    def request_flag(self) -> None:
+    def _request_flag(self) -> None:
         deployed_token = input("[-]input your deployed token: ")
-        message: dict = self._auth.parse_token(deployed_token.strip())
+        message: dict = self.auth.parse_token(deployed_token.strip())
         res = self._contract.at(message["contract_addr"]).isSolved().call()
         if res:
-            print("[+]flag: {}".format(self._config.flag))
+            print("[+]flag: {}".format(self.config.flag))
         else:
             print("[+]sorry, it seems that you have not solved this~~~~")
 
-    def get_contract_source(self) -> None:
-        for key, data in self._build.items():
+    def _get_contract_source(self) -> None:
+        for key, data in self.build.items():
             print(f"{key}.sol")
             print(data["source"])
