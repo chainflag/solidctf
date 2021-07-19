@@ -54,8 +54,8 @@ class _MenuBase:
     def _request_flag(self) -> None:
         deployed_token = input("[-]input your deployed token: ")
         message: dict = self.auth.parse_token(deployed_token.strip())
-        res = self._contract.at(message["contract_addr"]).isSolved().call()
-        if res:
+        is_solved = self._contract.at(message["contract_addr"]).isSolved().call()
+        if is_solved:
             print("[+]flag: {}".format(self.config.flag))
         else:
             print("[+]sorry, it seems that you have not solved this~~~~")
