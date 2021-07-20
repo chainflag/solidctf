@@ -49,11 +49,10 @@ class ContractConstructor:
         tx: Dict = self._instance.constructor(*args).buildTransaction()
         return sender.transact(
             {
-                "from": sender.address,
                 "value": Wei(amount),
                 "nonce": nonce if nonce is not None else sender.nonce,
-                "gasPrice": Wei(gas_price) or tx["gasPrice"],
                 "gas": Wei(gas_limit) or tx["gas"],
+                "gasPrice": Wei(gas_price) or tx["gasPrice"],
                 "data": tx["data"],
             },
         )

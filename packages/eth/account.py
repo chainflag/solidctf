@@ -47,7 +47,7 @@ class Account:
         return to_checksum_address(contract_addr)
 
     def transact(self, tx: Dict) -> str:
-        tx["chainId"] = self._web3.eth.chain_id
+        tx["from"] = self.address
         with self._lock:
             try:
                 signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
