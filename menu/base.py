@@ -2,6 +2,8 @@ import sys
 
 from typing import List
 
+from eth_utils import to_checksum_address
+from paseto import PasetoException
 from web3 import Web3
 
 from config import Config
@@ -25,12 +27,25 @@ class _MenuBase:
     def select_option(self, choice: int) -> None:
         if choice <= 0 or choice > 4:
             print("Invalid option")
-            sys.exit(0)
+            sys.exit(1)
         self._option[choice]()
+
+    def parse_token_data(self, token: str, key: str) -> str:
+        try:
+            message: dict = self.auth.parse_token(token.strip())
+        except PasetoException as e:
+            print(f"Invalid token: {e}")
+            sys.exit(1)
+        else:
+            if key not in message:
+                print(f"{key} not in token")
+                sys.exit(1)
+
+        return message[key]
 
     def _create_game_account(self) -> None:
         account: Account = Account()
-        token: str = self.auth.create_token({"private_key": account.private_key})
+        token: str = self.auth.create_token({"pk": account.private_key})
         print("[+]Your game account: {}".format(account.address))
         print("[+]token: {}".format(token))
         estimate_gas: int = self._contract.deploy.estimate_gas(*self.config.constructor_args)
@@ -39,22 +54,22 @@ class _MenuBase:
 
     def _deploy_contract(self) -> None:
         token = input("[-]input your token: ")
-        message: dict = self.auth.parse_token(token.strip())
-        account: Account = Account(self.web3, message["private_key"])
+        private_key: str = self.parse_token_data(token, "pk")
+        account: Account = Account(self.web3, private_key)
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
-            sys.exit(0)
+            sys.exit(1)
 
         contract_addr: str = account.get_contract_address()
         tx_hash: str = self._contract.deploy(*self.config.constructor_args, sender=account)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
-        print("[+]deployed token: {}".format(self.auth.create_token({"contract_addr": contract_addr})))
+        print("[+]deployed token: {}".format(self.auth.create_token({"addr": contract_addr})))
 
     def _request_flag(self) -> None:
         deployed_token = input("[-]input your deployed token: ")
-        message: dict = self.auth.parse_token(deployed_token.strip())
-        is_solved = self._contract.at(message["contract_addr"]).isSolved().call()
+        contract_addr: str = self.parse_token_data(deployed_token, "addr")
+        is_solved = self._contract.at(to_checksum_address(contract_addr)).isSolved().call()
         if is_solved:
             print("[+]flag: {}".format(self.config.flag))
         else:
