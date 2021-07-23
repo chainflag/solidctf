@@ -61,7 +61,7 @@ class _MenuBase:
             sys.exit(1)
 
         contract_addr: str = account.get_contract_address()
-        tx_hash: str = self._contract.deploy(*self.config.constructor_args, sender=account)
+        tx_hash: str = self._contract.deploy(account, self.config.constructor_value, *self.config.constructor_args)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
         print("[+]deployed token: {}".format(self.auth.create_token({"addr": contract_addr})))

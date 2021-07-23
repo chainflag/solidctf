@@ -13,10 +13,11 @@ banner: |
   You can finish this challenge in a lot of connections.
 
 auth_token:
-  secret: 
+  secret:
   exp_seconds: 7200
 
 contract_deploy:
   web3_provider: "https://ropsten.infura.io/"
   constructor_args:
     - helloworld
+  constructor_value: 0

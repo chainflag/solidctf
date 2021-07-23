@@ -39,9 +39,9 @@ class ContractConstructor:
 
     def __call__(
             self,
-            *args: Any,
-            amount: int = 0,
             sender: Account,
+            value: int = 0,
+            *args: Optional[Any],
             gas_limit: Optional[int] = None,
             gas_price: Optional[int] = None,
             nonce: Optional[int] = None,
@@ -49,7 +49,7 @@ class ContractConstructor:
         tx: Dict = self._instance.constructor(*args).buildTransaction()
         return sender.transact(
             {
-                "value": Wei(amount),
+                "value": Wei(value),
                 "nonce": nonce if nonce is not None else sender.nonce,
                 "gas": Wei(gas_limit) or tx["gas"],
                 "gasPrice": Wei(gas_price) or tx["gasPrice"],
@@ -57,5 +57,5 @@ class ContractConstructor:
             },
         )
 
-    def estimate_gas(self, *args: Any) -> int:
+    def estimate_gas(self, *args: Optional[Any]) -> int:
         return self._instance.constructor(*args).estimateGas()

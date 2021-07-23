@@ -13,6 +13,7 @@ class Config:
     exp_seconds: int
     web3_provider: str
     constructor_args: Any
+    constructor_value: int
 
 
 def parse_config(path: str) -> Config:
@@ -23,5 +24,6 @@ def parse_config(path: str) -> Config:
                      secret=unhexlify(config["auth_token"]["secret"].encode("ascii")),
                      exp_seconds=config["auth_token"]["exp_seconds"],
                      web3_provider=config["contract_deploy"]["web3_provider"],
-                     constructor_args=config["contract_deploy"]["constructor_args"])
+                     constructor_args=config["contract_deploy"]["constructor_args"] or tuple(),
+                     constructor_value=config["contract_deploy"]["constructor_value"])
     return _config
