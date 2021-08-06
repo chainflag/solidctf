@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 import os
 
-from config import parse_config
-from menu import Menu
-from packages.utils import Build, Paseto
+from base import _MenuBase
+from config import parse_config, Config
+from utils import Build, Paseto
+
+
+class Menu(_MenuBase):
+    def __init__(self, auth: Paseto, build: Build, config: Config) -> None:
+        super().__init__(auth, build, config)
+
 
 if __name__ == '__main__':
     config = parse_config(os.path.join(os.path.dirname(__file__), "config.yml"))

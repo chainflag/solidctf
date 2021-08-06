@@ -13,7 +13,7 @@ you can run `python3 -c "import secrets; print(secrets.token_hex(32))"` to gener
 
 * Build Docker Image and run Docker Container, then you can `nc` to the challenge.
 ```bash
-$ docker build -t "eth-challenge" .
-$ docker run -d -p "pub_port:20000" eth-challenge
+$ docker build -t eth-challenge .
+$ docker run -d -p pub_port:20000 eth-challenge
 $ nc [hostname] [port]
 ```

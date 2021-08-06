@@ -5,7 +5,7 @@ from eth_typing import ChecksumAddress
 from web3 import Web3, contract
 from brownie.convert import Wei
 
-from packages.eth import Account
+from utils.eth import Account
 
 
 class Contract:

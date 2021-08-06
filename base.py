@@ -7,8 +7,8 @@ from paseto import PasetoException
 from web3 import Web3
 
 from config import Config
-from packages.eth import Account, Contract
-from packages.utils import Build, Paseto
+from utils.eth import Account, Contract
+from utils import Build, Paseto
 
 
 class _MenuBase:
