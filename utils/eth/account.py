@@ -32,19 +32,15 @@ class Account:
     def nonce(self) -> int:
         return self._web3.eth.get_transaction_count(self.address)
 
-    def get_contract_address(self, tx_hash: Optional[str] = None, nonce: Optional[int] = None) -> ChecksumAddress:
-        if tx_hash is not None:
-            tx_receipt = self._web3.eth.get_transaction_receipt(tx_hash)
-            return to_checksum_address(tx_receipt['contractAddress'])
-
+    def get_deployment_address(self, nonce: Optional[int] = None) -> ChecksumAddress:
         if nonce is None:
             nonce = self.nonce
 
         address = HexBytes(self.address)
         raw = rlp.encode([address, nonce])
+        deployment_address = HexBytes(keccak(raw)[12:]).hex()
 
-        contract_addr = HexBytes(keccak(raw)[12:]).hex()
-        return to_checksum_address(contract_addr)
+        return to_checksum_address(deployment_address)
 
     def transact(self, tx: Dict) -> str:
         tx["from"] = self.address

@@ -60,7 +60,7 @@ class _MenuBase:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(1)
 
-        contract_addr: str = account.get_contract_address()
+        contract_addr: str = account.get_deployment_address()
         tx_hash: str = self._contract.deploy(account, self.config.constructor_value, *self.config.constructor_args)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
