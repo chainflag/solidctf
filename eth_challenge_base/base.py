@@ -6,9 +6,8 @@ from eth_utils import to_checksum_address
 from paseto import PasetoException
 from web3 import Web3
 
-from config import Config
-from utils.eth import Account, Contract
-from utils import Build, Paseto
+from eth_challenge_base.config import Config
+from eth_challenge_base.utils import Paseto, Build, Contract, Account
 
 
 class _MenuBase:

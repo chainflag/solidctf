@@ -133,5 +133,6 @@ dmypy.json
 reports/
 
 # other
+config.yml
 .DS_Store
 .idea/
