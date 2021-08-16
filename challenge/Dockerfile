@@ -4,4 +4,3 @@ ENV PORT=20000
 
 COPY config.yml .
 COPY contracts contracts
-RUN brownie compile

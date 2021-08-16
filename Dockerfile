@@ -12,12 +12,10 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY run.py .
-COPY eth_challenge_base eth_challenge_base/
+COPY eth_challenge_base eth_challenge_base
 
+COPY shell /startup
 COPY entrypoint.sh /entrypoint.sh
-COPY 00-create-xinetd-service 99-start-xinetd /startup/
-
-RUN mkdir /var/log/ctf
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["tini", "-g", "--"]
