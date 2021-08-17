@@ -1,0 +1,9 @@
+version: "3.3"
+services:
+  challenge:
+    image: chainflag/eth-challenge-base
+    ports:
+      - "20000:20000"
+    volumes:
+      - ./contracts:/home/ctf/contracts
+      - ./challenge.yml:/home/ctf/challenge.yml
