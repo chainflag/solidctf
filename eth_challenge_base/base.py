@@ -7,7 +7,7 @@ from paseto import PasetoException
 from web3 import Web3
 
 from eth_challenge_base.config import Config
-from eth_challenge_base.utils import Paseto, Build, Contract, Account
+from eth_challenge_base.utils import Paseto, Build, Account, Contract
 
 
 class _MenuBase:

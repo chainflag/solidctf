@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import os
 
+from eth_challenge_base.menu import Menu
 from eth_challenge_base.config import parse_config
 from eth_challenge_base.utils import Paseto, Build
-from eth_challenge_base.menu import Menu
 
 if __name__ == '__main__':
     config = parse_config(os.path.join(os.path.dirname(__file__), "challenge.yml"))
