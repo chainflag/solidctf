@@ -1,6 +1,6 @@
 FROM python:3-slim-buster
-ENV PORT=20000
-WORKDIR /opt
+
+WORKDIR /home/ctf
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -11,10 +11,13 @@ RUN apt-get update \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
-RUN brownie compile
-RUN mkdir /var/log/ctf
-RUN chmod +x ./entrypoint.sh
+COPY run.py .
+COPY challenge .
+COPY eth_challenge_base eth_challenge_base
+
+COPY shell /startup
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["tini", "-g", "--"]
-CMD ["./entrypoint.sh"]
+CMD ["/entrypoint.sh"]
