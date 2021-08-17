@@ -10,7 +10,7 @@ from eth_challenge_base.utils import Paseto, Build
 
 def main():
     challenge_dir = os.path.dirname(__file__)
-    if not os.getenv("DOCKER_RUNNING", False):  # for debug
+    if os.getenv("DEBUG", False):
         challenge_dir = os.path.join(challenge_dir, "challenge")
 
     secret = unhexlify(os.getenv("TOKEN_SECRET").encode("ascii"))

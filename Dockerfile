@@ -1,5 +1,5 @@
 FROM python:3-slim-buster
-ENV DOCKER_RUNNING=true
+
 WORKDIR /home/ctf
 
 RUN apt-get update \
