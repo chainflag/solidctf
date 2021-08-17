@@ -16,6 +16,14 @@ def parse_config(path: str) -> Config:
     with open(path, "r") as f:
         config = yaml.safe_load(f)
 
-    constructor_args = config["deploy"]["constructor_args"] or tuple()
-    constructor_value = config["deploy"]["constructor_value"]
-    return Config(config["banner"], config["flags"][0], constructor_args, constructor_value)
+    try:
+        constructor_args = config["deploy"]["constructor_args"]
+    except KeyError:
+        constructor_args = None
+
+    try:
+        constructor_value = config["deploy"]["constructor_value"]
+    except KeyError:
+        constructor_value = 0
+
+    return Config(config["banner"], config["flags"][0], constructor_args or tuple(), constructor_value)
