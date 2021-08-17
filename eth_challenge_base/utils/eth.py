@@ -12,12 +12,11 @@ from brownie.exceptions import VirtualMachineError
 
 
 class Account:
-    def __init__(self, web3: Web3 = None, private_key: Union[int, bytes, str] = None) -> None:
-        self._web3 = web3 or Web3(Web3.HTTPProvider("null"))
+    def __init__(self, private_key: Union[int, bytes, str] = None) -> None:
         if private_key is None:
-            w3account = self._web3.eth.account.create()
+            w3account = web3.eth.account.create()
         else:
-            w3account = self._web3.eth.account.from_key(private_key)
+            w3account = web3.eth.account.from_key(private_key)
 
         self._lock = threading.Lock()
         self._account = w3account
@@ -25,12 +24,12 @@ class Account:
         self.private_key = HexBytes(self._account.key).hex()
 
     def balance(self) -> int:
-        balance = self._web3.eth.get_balance(self.address)
+        balance = web3.eth.get_balance(self.address)
         return balance
 
     @property
     def nonce(self) -> int:
-        return self._web3.eth.get_transaction_count(self.address)
+        return web3.eth.get_transaction_count(self.address)
 
     def get_deployment_address(self, nonce: Optional[int] = None) -> ChecksumAddress:
         if nonce is None:
@@ -47,7 +46,7 @@ class Account:
         with self._lock:
             try:
                 signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
-                txid = self._web3.eth.send_raw_transaction(signed_tx)
+                txid = web3.eth.send_raw_transaction(signed_tx)
             except ValueError as e:
                 exc = VirtualMachineError(e)
                 if not hasattr(exc, "txid"):
@@ -57,8 +56,7 @@ class Account:
 
 
 class Contract:
-    def __init__(self, web3: Web3, build: Dict) -> None:
-        self.web3 = web3
+    def __init__(self, build: Dict) -> None:
         self._build = build.copy()
         self.bytecode = build["bytecode"]
         self.deploy = ContractConstructor(self)
@@ -72,7 +70,7 @@ class Contract:
         return self._build["contractName"]
 
     def at(self, address: ChecksumAddress) -> contract.ContractFunctions:
-        return self.web3.eth.contract(
+        return web3.eth.contract(
             address=address,
             abi=self.abi
         ).functions
@@ -80,7 +78,7 @@ class Contract:
 
 class ContractConstructor:
     def __init__(self, parent: "Contract") -> None:
-        self._instance = parent.web3.eth.contract(
+        self._instance = web3.eth.contract(
             abi=parent.abi,
             bytecode=parent.bytecode
         )
@@ -107,3 +105,6 @@ class ContractConstructor:
 
     def estimate_gas(self, *args: Optional[Any]) -> int:
         return self._instance.constructor(*args).estimateGas()
+
+
+web3 = Web3()  # https://web3py.readthedocs.io/en/stable/providers.html#provider-via-environment-variable

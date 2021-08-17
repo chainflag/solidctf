@@ -4,7 +4,6 @@ from typing import List
 
 from eth_utils import to_checksum_address
 from paseto import PasetoException
-from web3 import Web3
 
 from eth_challenge_base.config import Config
 from eth_challenge_base.utils import Paseto, Build, Account, Contract
@@ -15,8 +14,7 @@ class _MenuBase:
         self.auth: Paseto = auth
         self.build: Build = build
         self.config: Config = config
-        self.web3: Web3 = Web3(Web3.HTTPProvider(self.config.web3_provider))
-        self._contract: Contract = Contract(self.web3, self.build.items()[0][1])
+        self._contract: Contract = Contract(self.build.items()[0][1])
         self._option: List = [None, self._create_game_account, self._deploy_contract, self._request_flag,
                               self._get_contract_source]
 
@@ -54,7 +52,7 @@ class _MenuBase:
     def _deploy_contract(self) -> None:
         token = input("[-]input your token: ")
         private_key: str = self.parse_token_data(token, "pk")
-        account: Account = Account(self.web3, private_key)
+        account: Account = Account(private_key)
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(1)
