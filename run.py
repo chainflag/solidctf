@@ -13,7 +13,8 @@ if __name__ == '__main__':
         challenge_dir = os.path.join(challenge_dir, "challenge")
 
     secret = unhexlify(os.getenv("TOKEN_SECRET").encode("ascii"))
-    auth = Paseto(secret, exp_seconds=int(os.getenv("TOKEN_EXP_SECONDS")))
+    exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
+    auth = Paseto(secret, exp_seconds=exp_seconds)
     build = Build(challenge_dir)
     config = parse_config(os.path.join(challenge_dir, "challenge.yml"))
 
