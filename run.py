@@ -7,7 +7,8 @@ from eth_challenge_base.menu import Menu
 from eth_challenge_base.config import parse_config
 from eth_challenge_base.utils import Paseto, Build
 
-if __name__ == '__main__':
+
+def main():
     challenge_dir = os.path.dirname(__file__)
     if not os.getenv("DOCKER_RUNNING", False):  # for debug
         challenge_dir = os.path.join(challenge_dir, "challenge")
@@ -23,3 +24,7 @@ if __name__ == '__main__':
 
     choice = int(input("[-]input your choice: "))
     menu.select_option(choice)
+
+
+if __name__ == '__main__':
+    main()
