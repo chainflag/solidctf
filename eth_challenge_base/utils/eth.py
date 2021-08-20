@@ -6,7 +6,8 @@ from typing import Any, Dict, List, Optional, Union
 from eth_typing import ChecksumAddress
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
-from web3 import Web3, contract
+from web3 import contract
+from web3.auto import w3 as web3
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 
@@ -42,6 +43,7 @@ class Account:
         return to_checksum_address(deployment_address)
 
     def transact(self, tx: Dict) -> str:
+        tx["chainId"] = web3.eth.chain_id
         tx["from"] = self.address
         with self._lock:
             try:
@@ -105,6 +107,3 @@ class ContractConstructor:
 
     def estimate_gas(self, *args: Optional[Any]) -> int:
         return self._instance.constructor(*args).estimateGas()
-
-
-web3 = Web3()  # https://web3py.readthedocs.io/en/stable/providers.html#provider-via-environment-variable
