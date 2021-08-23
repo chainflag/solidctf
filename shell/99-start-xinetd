@@ -1,4 +1,0 @@
-#!/bin/bash
-
-mkdir /var/log/ctf
-xinetd -filelog /var/log/ctf/xinetd.log

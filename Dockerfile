@@ -15,8 +15,9 @@ COPY run.py .
 COPY challenge .
 COPY eth_challenge_base eth_challenge_base
 
-COPY shell /startup
+COPY xinetd.sh /xinetd.sh
 COPY entrypoint.sh /entrypoint.sh
+RUN mkdir /var/log/ctf
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["tini", "-g", "--"]

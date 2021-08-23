@@ -22,3 +22,6 @@ service ctf
     rlimit_cpu      = ${RLIMIT_CPU:-5}
 }
 EOF
+
+xinetd -filelog /var/log/ctf/xinetd.log
+tail -f /var/log/ctf/*

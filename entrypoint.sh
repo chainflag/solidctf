@@ -1,13 +1,12 @@
 #!/bin/bash
 
+if ! brownie compile; then
+  exit 1
+fi
+
 if [ -z "$TOKEN_SECRET" ]; then
   TOKEN_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))")
   export TOKEN_SECRET
 fi
 
-for f in /startup/*; do
-    echo "[+] running $f"
-    bash "$f"
-done
-
-tail -f /var/log/ctf/*
+source /xinetd.sh
