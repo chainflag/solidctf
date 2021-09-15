@@ -1,4 +1,3 @@
-import threading
 import rlp
 
 from typing import Any, Dict, List, Optional, Union
@@ -19,7 +18,6 @@ class Account:
         else:
             w3account = web3.eth.account.from_key(private_key)
 
-        self._lock = threading.Lock()
         self._account = w3account
         self.address = self._account.address
         self.private_key = HexBytes(self._account.key).hex()
@@ -45,16 +43,15 @@ class Account:
     def transact(self, tx: Dict) -> str:
         tx["chainId"] = web3.eth.chain_id
         tx["from"] = self.address
-        with self._lock:
-            try:
-                signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
-                txid = web3.eth.send_raw_transaction(signed_tx)
-            except ValueError as e:
-                exc = VirtualMachineError(e)
-                if not hasattr(exc, "txid"):
-                    raise exc from None
-
-        return txid.hex()
+        try:
+            signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
+            txid = web3.eth.send_raw_transaction(signed_tx)
+        except ValueError as e:
+            exc = VirtualMachineError(e)
+            if not hasattr(exc, "txid"):
+                raise exc from None
+        else:
+            return txid.hex()
 
 
 class Contract:
