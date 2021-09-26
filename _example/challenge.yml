@@ -1,15 +1,6 @@
 banner: |
   We design a pretty easy contract game. Enjoy it!
-  1. Create a game account
-  2. Deploy a game contract
-  3. Request for flag
-  4. Get source code
-  Option 1, get an account which will be used to deploy the contract;
-  Before option 2, please transfer some eth to this account (for gas);
-  Option 2, the robot will use the account to deploy the contract for the challenge;
-  Option 3, use this option to obtain the flag when isSolved() function returns true;
-  Option 4, use this option to get source code.
-  You can finish this challenge in a lot of connections.
+  Obtain the flag when isSolved() function returns true!
 
 flags:
   - flag{chainflag.org}
