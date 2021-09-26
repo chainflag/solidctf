@@ -19,4 +19,4 @@ def parse_config(path: str) -> Config:
     except KeyError:
         payable_value = 0
 
-    return Config(config["banner"], config["flags"][0], payable_value)
+    return Config(config["banner"], config["flag"], payable_value)
