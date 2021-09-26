@@ -8,6 +8,6 @@ from run import main
 os.environ["DEBUG"] = str(True)
 os.environ["TOKEN_SECRET"] = secrets.token_hex(32)
 os.environ["WEB3_PROVIDER_URI"] = "http://localhost:8545"
-os.system("cd _example && brownie compile")
+os.system("cd example && brownie compile")
 
 main()

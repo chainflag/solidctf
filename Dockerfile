@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY run.py .
-COPY _example .
+COPY example .
 COPY eth_challenge_base eth_challenge_base
 
 COPY xinetd.sh /xinetd.sh

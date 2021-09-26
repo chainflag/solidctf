@@ -11,7 +11,7 @@ from eth_challenge_base.utils import Paseto, Build
 def main():
     challenge_dir = os.path.dirname(__file__)
     if os.getenv("DEBUG", False):
-        challenge_dir = os.path.join(challenge_dir, "_example")
+        challenge_dir = os.path.join(challenge_dir, "example")
 
     secret = unhexlify(os.getenv("TOKEN_SECRET").encode("ascii"))
     exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
