@@ -27,18 +27,14 @@ class _MenuBase:
             sys.exit(1)
         self._option[choice]()
 
-    def parse_token_data(self, token: str, key: str) -> str:
+    def private_key_from_token(self, token: str) -> str:
         try:
             message: dict = self.auth.parse_token(token.strip())
         except PasetoException as e:
             print(f"Invalid token: {e}")
             sys.exit(1)
-        else:
-            if key not in message:
-                print(f"{key} not in token")
-                sys.exit(1)
 
-        return message[key]
+        return message["pk"]
 
     def _create_game_account(self) -> None:
         account: Account = Account()
@@ -51,8 +47,7 @@ class _MenuBase:
 
     def _deploy_contract(self) -> None:
         token = input("[-]input your token: ")
-        private_key: str = self.parse_token_data(token, "pk")
-        account: Account = Account(private_key)
+        account: Account = Account(self.private_key_from_token(token))
         if account.balance() == 0:
             print("Insufficient balance of {}".format(account.address))
             sys.exit(1)
@@ -61,11 +56,11 @@ class _MenuBase:
         tx_hash: str = self._contract.deploy(account, self.config.constructor_value, *self.config.constructor_args)
         print("[+]Contract address: {}".format(contract_addr))
         print("[+]Transaction hash: {}".format(tx_hash))
-        print("[+]deployed token: {}".format(self.auth.create_token({"addr": contract_addr})))
 
     def _request_flag(self) -> None:
-        deployed_token = input("[-]input your deployed token: ")
-        contract_addr: str = self.parse_token_data(deployed_token, "addr")
+        token = input("[-]input your token: ")
+        account: Account = Account(self.private_key_from_token(token))
+        contract_addr: str = account.get_deployment_address(account.nonce - 1)
         is_solved = self._contract.at(to_checksum_address(contract_addr)).isSolved().call()
         if is_solved:
             print("[+]flag: {}".format(self.config.flag))
