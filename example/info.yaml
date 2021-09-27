@@ -1,6 +1,6 @@
-banner: |
-  We design a pretty easy contract game. Enjoy it!
-  Obtain the flag when isSolved() function returns true!
+description: |
+  We design a pretty easy contract challenge. Enjoy it!
+  Your goal is to make isSolved() function returns true!
 
 flag: flag{placeholder}
 

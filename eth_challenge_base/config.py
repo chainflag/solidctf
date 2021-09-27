@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 @dataclass(eq=False, frozen=True)
 class Config:
-    banner: str
+    description: str
     flag: str
     payable_value: int
 
@@ -19,4 +19,4 @@ def parse_config(path: str) -> Config:
     except KeyError:
         payable_value = 0
 
-    return Config(config["banner"], config["flag"], payable_value)
+    return Config(config["description"], config["flag"], payable_value)

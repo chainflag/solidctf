@@ -16,7 +16,7 @@ nc 127.0.0.1 20000
 Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
 * `contracts` is contracts directory, you need to code challenge contract(s) deployment flow and solved checker in Setup.sol
 * `chall.env` is used to set the environment variables for docker, including web3 provider, token secret and token expiration seconds
-* `info.yaml` is config information(e.g. flag) regarding the contract challenge
+* `info.yaml` is config information(e.g. description, flag) regarding the contract challenge
 
 **Environment variable defaults**
 

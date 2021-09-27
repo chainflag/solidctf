@@ -8,6 +8,7 @@ from typing import Callable, List
 from eth_utils import to_checksum_address
 from paseto import PasetoException
 
+from eth_challenge_base.config import Config
 from eth_challenge_base.utils import Paseto, Account, Contract
 
 
@@ -18,11 +19,11 @@ class Action:
 
 
 class ActionHandler:
-    def __init__(self, flag: str, payable_value: int, project_path: str) -> None:
+    def __init__(self, config: Config, project_path: str) -> None:
         exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
         self._auth = Paseto(unhexlify(os.getenv("TOKEN_SECRET").encode("ascii")), exp_seconds=exp_seconds)
-        self._actions: List[Action] = [self._create_account_action(), self._deploy_contract_action(payable_value),
-                                       self._get_flag_action(flag)]
+        self._actions: List[Action] = [self._create_account_action(), self._deploy_contract_action(config.payable_value),
+                                       self._get_flag_action(config.flag)]
 
         with open(os.path.join(project_path, "build/contracts/Setup.json")) as fp:
             build_json = json.load(fp)
