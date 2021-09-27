@@ -77,7 +77,12 @@ class ActionHandler:
                 return 1
 
             account: Account = Account(message["pk"])
-            contract_addr: str = account.get_deployment_address(account.nonce - 1)
+            nonce: int = account.nonce
+            if nonce == 0:
+                print("The challenge contract has not yet been deployed")
+                return 1
+
+            contract_addr: str = account.get_deployment_address(nonce - 1)
             is_solved = self._contract.at(to_checksum_address(contract_addr)).isSolved().call()
             if is_solved:
                 print("[+]flag: {}".format(flag))
