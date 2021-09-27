@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import os
+import signal
 
 from eth_challenge_base.action import ActionHandler
 from eth_challenge_base.config import parse_config
+
+signal.alarm(60)
 
 
 def main():
