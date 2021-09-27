@@ -91,7 +91,7 @@ class ContractConstructor:
             self,
             sender: Account,
             value: int = 0,
-            *args: Optional[Any],
+            args: Optional[Any] = None,
             gas_limit: Optional[int] = None,
             gas_price: Optional[int] = None,
             nonce: Optional[int] = None,
@@ -107,5 +107,5 @@ class ContractConstructor:
             },
         )
 
-    def estimate_gas(self, *args: Optional[Any]) -> int:
+    def estimate_gas(self, args: Optional[Any] = None) -> int:
         return self._instance.constructor(*args).estimateGas()
