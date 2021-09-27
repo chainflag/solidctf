@@ -5,6 +5,7 @@ from binascii import unhexlify
 from dataclasses import dataclass
 from typing import Callable, List
 
+from eth_typing import HexStr
 from eth_utils import to_checksum_address
 from paseto import PasetoException
 
@@ -23,7 +24,7 @@ class ActionHandler:
         exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
         self._auth = Paseto(unhexlify(os.getenv("TOKEN_SECRET").encode("ascii")), exp_seconds=exp_seconds)
         self._actions: List[Action] = [self._create_account_action(), self._deploy_contract_action(config.payable_value),
-                                       self._get_flag_action(config.flag)]
+                                       self._get_flag_action(config.flag, config.solved_event)]
 
         with open(os.path.join(project_path, "build/contracts/Setup.json")) as fp:
             build_json = json.load(fp)
@@ -68,7 +69,7 @@ class ActionHandler:
 
         return Action(name="deploy challenge contract", handler=action)
 
-    def _get_flag_action(self, flag: str) -> Action:
+    def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
             try:
                 message: dict = self._auth.parse_token(input("[-]input your token: ").strip())
@@ -83,7 +84,16 @@ class ActionHandler:
                 return 1
 
             contract_addr: str = account.get_deployment_address(nonce - 1)
-            is_solved = self._contract.at(to_checksum_address(contract_addr)).isSolved().call()
+            is_solved = False
+            if solved_event:
+                tx_hash = input(f"[-]input tx hash that emitted {solved_event} event: ").strip()
+                logs = self._contract.get_events(to_checksum_address(contract_addr), solved_event, HexStr(tx_hash))
+                for item in logs:
+                    if item['address'] == contract_addr:
+                        is_solved = True
+            else:
+                is_solved = self._contract.at(to_checksum_address(contract_addr)).functions.isSolved().call()
+
             if is_solved:
                 print(f"[+]flag: {flag}")
                 return 0

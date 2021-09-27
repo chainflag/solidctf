@@ -8,6 +8,7 @@ class Config:
     description: str
     flag: str
     payable_value: int
+    solved_event: str
 
 
 def parse_config(path: str) -> Config:
@@ -19,4 +20,9 @@ def parse_config(path: str) -> Config:
     except KeyError:
         payable_value = 0
 
-    return Config(config["description"], config["flag"], payable_value)
+    try:
+        solved_event = config["solved_event"]
+    except KeyError:
+        solved_event = ""
+
+    return Config(config["description"], config["flag"], payable_value, solved_event)

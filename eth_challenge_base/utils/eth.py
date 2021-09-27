@@ -1,12 +1,13 @@
 import rlp
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Iterable
 
-from eth_typing import ChecksumAddress
+from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import contract
 from web3.auto import w3 as web3
+from web3.types import EventData
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 
@@ -68,11 +69,15 @@ class Contract:
     def name(self) -> str:
         return self._build["contractName"]
 
-    def at(self, address: ChecksumAddress) -> contract.ContractFunctions:
+    def at(self, address: ChecksumAddress) -> contract.Contract:
         return web3.eth.contract(
             address=address,
             abi=self.abi
-        ).functions
+        )
+
+    def get_events(self, address: ChecksumAddress, topic: str, tx_hash: HexStr) -> Iterable[EventData]:
+        tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
+        return self.at(address).events[topic]().processReceipt(tx_receipt)
 
 
 class ContractConstructor:

@@ -5,3 +5,5 @@ description: |
 flag: flag{placeholder}
 
 payable_value: 0
+
+# solved_event: SendFlag
