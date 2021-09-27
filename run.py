@@ -19,7 +19,7 @@ def main():
     for i, action in enumerate(actions):
         print(f"{i+1} - {action.name}")
 
-    choice = int(input("[-]action? ")) - 1
+    choice = int(input("[-]input your choice: ")) - 1
     if choice < 0 or choice >= len(actions):
         print("can you not")
         exit(1)
