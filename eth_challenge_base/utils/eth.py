@@ -65,10 +65,6 @@ class Contract:
     def abi(self) -> List:
         return self._build["abi"]
 
-    @property
-    def name(self) -> str:
-        return self._build["contractName"]
-
     def at(self, address: ChecksumAddress) -> ContractFunctions:
         return web3.eth.contract(
             address=address,
