@@ -3,6 +3,7 @@ import os
 
 from binascii import unhexlify
 from dataclasses import dataclass
+from glob import glob
 from typing import Callable, List, Any
 
 from eth_typing import HexStr
@@ -20,14 +21,16 @@ class Action:
 
 
 class ActionHandler:
-    def __init__(self, config: Config, project_path: str) -> None:
+    def __init__(self, build_path: str, config: Config) -> None:
         exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
         self._auth = Paseto(unhexlify(os.getenv("TOKEN_SECRET").encode("ascii")), exp_seconds=exp_seconds)
         self._actions: List[Action] = [self._create_account_action(config.constructor_args),
                                        self._deploy_contract_action(config.constructor_value, config.constructor_args),
                                        self._get_flag_action(config.flag, config.solved_event)]
+        if config.show_source:
+            self._actions.append(self._show_source_action(build_path))
 
-        with open(os.path.join(project_path, f"build/contracts/{config.contract}.json")) as fp:
+        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
 
@@ -68,7 +71,7 @@ class ActionHandler:
             print(f"[+]transaction hash: {tx_hash}")
             return 0
 
-        return Action(name="deploy challenge contract", handler=action)
+        return Action(name="deploy challenge", handler=action)
 
     def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
@@ -102,4 +105,21 @@ class ActionHandler:
                 print("[+]it seems that you have not solved the challenge~~~~")
                 return 1
 
-        return Action(name="get flag", handler=action)
+        return Action(name="get the flag", handler=action)
+
+    def _show_source_action(self, build_path: str) -> Action:
+        def action() -> int:
+            for path in glob(os.path.join(build_path, "*.json")):
+                try:
+                    with open(path) as fp:
+                        build_json = json.load(fp)
+                except json.JSONDecodeError:
+                    continue
+                else:
+                    print()
+                    print(build_json["sourcePath"])
+                    print(build_json["source"])
+
+            return 0
+
+        return Action(name="show source", handler=action)

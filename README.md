@@ -14,9 +14,9 @@ nc 127.0.0.1 20000
 ### Build Challenge
 
 Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
-* `contracts` is a directory used to store challenge contract, you should code `isSolved()` function for the contract to check that it's solved
+* `contracts` is a directory used to store challenge contract, you should code isSolved() function for the contract to check if it is solved
 * `chall.env` is for setting environment variables of docker container, including web3 provider, token secret and token expiration seconds
-* `info.yaml` is config info regarding the contract challenge, you can specify challenge description, flag, contract name, contract constructor in this file
+* `info.yaml` is config info regarding the contract challenge, you can specify challenge description, flag, contract name, etc. in this file
 
 **Environment variable defaults**
 
@@ -31,12 +31,12 @@ Start serving your contract challenge
 bash start.sh
 ```
 
-## Credits
+## License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+## Acknowledgements
 
 * https://github.com/eth-brownie/brownie
 * https://github.com/hitcxy/blockchain_template
 * https://github.com/paradigm-operations/paradigm-ctf-2021
-
-## License
-
-This project is licensed under the MIT License

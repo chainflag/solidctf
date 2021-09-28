@@ -4,10 +4,12 @@ description: |
 
 flag: flag{placeholder}
 
-contract: Greeter # contract class name not file name
+contract: Greeter # Contract class name not file name
 
 constructor:
   args: ["hello"]
   value: 0
 
-# solved_event: SendFlag
+#show_source: False # True by default
+
+#solved_event: SendFlag

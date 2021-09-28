@@ -15,7 +15,7 @@ def main():
 
     config = parse_config(os.path.join(challenge_dir, "info.yaml"))
     print(config.description)
-    actions = ActionHandler(config, challenge_dir)
+    actions = ActionHandler(os.path.join(challenge_dir, "build/contracts"), config)
     for i, action in enumerate(actions):
         print(f"{i+1} - {action.name}")
 
