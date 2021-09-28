@@ -10,7 +10,7 @@ from eth_utils import to_checksum_address
 from paseto import PasetoException
 
 from eth_challenge_base.config import Config
-from eth_challenge_base.utils import Paseto, Account, Contract
+from eth_challenge_base.utils import Account, Contract, Paseto
 
 
 @dataclass
@@ -88,12 +88,12 @@ class ActionHandler:
             is_solved = False
             if solved_event:
                 tx_hash = input(f"[-]input tx hash that emitted {solved_event} event: ").strip()
-                logs = self._contract.get_events(to_checksum_address(contract_addr), solved_event, HexStr(tx_hash))
+                logs = self._contract.get_events(solved_event, HexStr(tx_hash))
                 for item in logs:
                     if item['address'] == contract_addr:
                         is_solved = True
             else:
-                is_solved = self._contract.at(to_checksum_address(contract_addr)).functions.isSolved().call()
+                is_solved = self._contract.at(to_checksum_address(contract_addr)).isSolved().call()
 
             if is_solved:
                 print(f"[+]flag: {flag}")
