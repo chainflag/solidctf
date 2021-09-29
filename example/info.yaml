@@ -1,15 +1,16 @@
+contract: Greeter # Challenge contract class name(not filename)
+
+# Print the description when players nc to the challenge
 description: |
   We design a pretty easy contract challenge. Enjoy it!
   Your goal is to make isSolved() function returns true!
 
 flag: flag{placeholder}
 
-contract: Greeter # Contract class name not file name
-
 constructor:
   args: ["hello"]
   value: 0
 
-#show_source: False # True by default
+#show_source: False # True by default(show source option available), or False for a reverse contract challenge
 
-#solved_event: SendFlag
+#solved_event: SendFlag # Default solved checker is isSolved() view function, but it also supports emitted event as the checker

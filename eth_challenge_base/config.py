@@ -6,9 +6,9 @@ from typing import Any
 
 @dataclass(eq=False, frozen=True)
 class Config:
+    contract: str
     description: str
     flag: str
-    contract: str
     show_source: bool
     solved_event: str
     constructor_args: Any
@@ -22,6 +22,11 @@ def parse_config(path: str) -> Config:
     show_source = config.get("show_source", True)
     solved_event = config.get("solved_event", "")
     constructor = config.get("constructor", {})
+    constructor_args = constructor.get("args", ())
+    constructor_value = constructor.get("value", 0)
 
-    return Config(config["description"], config["flag"], config["contract"], show_source, solved_event,
-                  constructor.get("args", ()), constructor.get("value", 0))
+    if constructor_value is None or constructor_value < 0:
+        constructor_value = 0
+
+    return Config(config["contract"], config["description"], config["flag"],
+                  show_source, solved_event, constructor_args, constructor_value)
