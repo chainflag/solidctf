@@ -1,5 +1,5 @@
-import secrets
 import hashlib
+import secrets
 
 class Powser:
     def __init__(self, difficulty=5, prefix_length=8):

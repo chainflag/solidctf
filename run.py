@@ -14,9 +14,9 @@ def main():
     if difficulty != 0:
         powserver = Powser(difficulty)
         print(f'''[+] sha256({ powserver.prefix } + ???).binary.endswith('{ '0' * powserver.difficulty }')''')
-        answer: str = input('[-] ??? = ')
+        answer: str = input("[-] ??? = ")
         if not powserver.verify_hash(answer):
-            print('[+] wrong proof')
+            print("[+] wrong proof")
             exit(1)
 
     challenge_dir = os.path.dirname(__file__)
