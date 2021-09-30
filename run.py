@@ -10,10 +10,11 @@ signal.alarm(60)
 
 
 def main():
-    if not os.getenv("DONT_DO_POW", False) or len(os.getenv("DONT_DO_POW")) == 0:
-        powserver = PoWServer()
+    difficulty = int(os.getenv("POW_DIFFICULTY", '0'))
+    if difficulty != 0:
+        powserver = PoWServer(difficulty)
         print(f'''[+] sha256({ powserver.prefix } + ???).binary.endswith('{ '0' * powserver.difficulty }')''')
-        answer = input('[-] ??? = ')
+        answer: str = input('[-] ??? = ')
         if not powserver.verify_hash(answer):
             print('[+] wrong proof')
             exit(1)
