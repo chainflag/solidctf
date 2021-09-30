@@ -4,7 +4,7 @@ import signal
 
 from eth_challenge_base.action import ActionHandler
 from eth_challenge_base.config import parse_config
-from eth_challenge_base.utils import PoWServer
+from eth_challenge_base.utils import Powser
 
 signal.alarm(60)
 
@@ -12,7 +12,7 @@ signal.alarm(60)
 def main():
     difficulty = int(os.getenv("POW_DIFFICULTY", '0'))
     if difficulty != 0:
-        powserver = PoWServer(difficulty)
+        powserver = Powser(difficulty)
         print(f'''[+] sha256({ powserver.prefix } + ???).binary.endswith('{ '0' * powserver.difficulty }')''')
         answer: str = input('[-] ??? = ')
         if not powserver.verify_hash(answer):

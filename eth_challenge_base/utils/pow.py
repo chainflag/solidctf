@@ -1,7 +1,7 @@
 import secrets
 import hashlib
 
-class PoWServer:
+class Powser:
     def __init__(self, difficulty=5, prefix_length=8):
         self.difficulty = difficulty
         self.prefix = secrets.token_urlsafe(prefix_length)[:prefix_length].replace('-', 'b').replace('_', 'a')

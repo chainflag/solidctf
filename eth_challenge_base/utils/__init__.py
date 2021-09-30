@@ -1,3 +1,3 @@
 from .auth import Paseto
 from .eth import Account, Contract
-from .pow import PoWServer
+from .pow import Powser
