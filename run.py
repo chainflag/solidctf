@@ -32,7 +32,7 @@ def main():
     choice = None
     while choice is None:
         try:
-            choice = int(input("[-]input your choice: ")) - 1
+            choice = int(input("[-] input your choice: ")) - 1
         except ValueError:
             print("must be an integer")
             continue
