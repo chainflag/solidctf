@@ -4,7 +4,7 @@ import signal
 
 from eth_challenge_base.action import ActionHandler
 from eth_challenge_base.config import parse_config
-from eth_challenge_base.pow import PoWServer
+from eth_challenge_base.utils import PoWServer
 
 signal.alarm(60)
 
@@ -12,7 +12,10 @@ signal.alarm(60)
 def main():
     if not os.getenv("DONT_DO_POW", False) or len(os.getenv("DONT_DO_POW")) == 0:
         powserver = PoWServer()
-        if not powserver.check():
+        print(f'''[+] sha256({ powserver.prefix } + ???).binary.endswith('{ '0' * powserver.difficulty }')''')
+        answer = input('[-] ??? = ')
+        if not powserver.verify_hash(answer):
+            print('[+] wrong proof')
             exit(1)
 
     challenge_dir = os.path.dirname(__file__)

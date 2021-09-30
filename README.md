@@ -41,3 +41,4 @@ Distributed under the MIT License. See LICENSE for more information.
 * https://github.com/eth-brownie/brownie
 * https://github.com/hitcxy/blockchain_template
 * https://github.com/paradigm-operations/paradigm-ctf-2021
+* https://github.com/balsn/proof-of-work
