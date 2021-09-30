@@ -26,7 +26,6 @@ nc 127.0.0.1 20000
 | ----------------- | ----------------------------------
 | TOKEN_SECRET      | random by [secrets.token_hex(32)](https://github.com/chainflag/eth-challenge-base/blob/main/entrypoint.sh#L7-L10)
 | TOKEN_EXP_SECONDS | None(non-expiring)
-| WEB3_PROVIDER_URI | None
 
 ### Start serving your contract challenge
 ```bash

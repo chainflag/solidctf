@@ -19,10 +19,18 @@ def main():
     for i, action in enumerate(actions):
         print(f"{i+1} - {action.name}")
 
-    choice = int(input("[-]input your choice: ")) - 1
-    if choice < 0 or choice >= len(actions):
-        print("can you not")
-        exit(1)
+    choice = None
+    while choice is None:
+        try:
+            choice = int(input("[-]input your choice: ")) - 1
+        except ValueError:
+            print("must be an integer")
+            continue
+        else:
+            if choice < 0 or choice >= len(actions):
+                print("invalid option")
+                exit(1)
+
     exit(actions[choice].handler())
 
 
