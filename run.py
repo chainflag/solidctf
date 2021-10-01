@@ -13,9 +13,8 @@ def main():
     difficulty = int(os.getenv("POW_DIFFICULTY", '0'))
     if difficulty != 0:
         powserver = Powser(difficulty)
-        print(f'''[+] sha256({ powserver.prefix } + ???).binary.endswith('{ '0' * powserver.difficulty }')''')
-        answer: str = input("[-] ??? = ")
-        if not powserver.verify_hash(answer):
+        print(powserver)
+        if not powserver.verify_hash(input("[-] ??? = ")):
             print("[+] wrong proof")
             exit(1)
 
