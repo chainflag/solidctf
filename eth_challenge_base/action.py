@@ -25,7 +25,7 @@ class ActionHandler:
         with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
-        self._token_key = pyseto.Key.new(version=4, purpose="local", key=os.getenv("TOKEN_SECRET"))
+        self._token_key = pyseto.Key.new(version=4, purpose="local", key=os.getenv("TOKEN_SECRET", ""))
 
         self._actions: List[Action] = [self._create_account_action(config.constructor_args),
                                        self._deploy_contract_action(config.constructor_value, config.constructor_args),

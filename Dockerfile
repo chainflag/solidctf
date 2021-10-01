@@ -3,8 +3,7 @@ FROM python:3-slim-buster
 WORKDIR /home/ctf
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    build-essential libsodium-dev tini xinetd \
+    && apt-get install -y --no-install-recommends build-essential tini xinetd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
