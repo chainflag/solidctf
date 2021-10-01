@@ -1,17 +1,17 @@
 import json
 import os
 
-from binascii import unhexlify
+import pyseto
+
 from dataclasses import dataclass
 from glob import glob
 from typing import Callable, List, Any
 
 from eth_typing import HexStr
 from eth_utils import to_checksum_address
-from paseto import PasetoException
 
 from eth_challenge_base.config import Config
-from eth_challenge_base.utils import Account, Contract, Paseto
+from eth_challenge_base.utils import Account, Contract
 
 
 @dataclass
@@ -22,17 +22,16 @@ class Action:
 
 class ActionHandler:
     def __init__(self, build_path: str, config: Config) -> None:
-        exp_seconds = int(os.getenv("TOKEN_EXP_SECONDS")) if os.getenv("TOKEN_EXP_SECONDS") else None
-        self._auth = Paseto(unhexlify(os.getenv("TOKEN_SECRET").encode("ascii")), exp_seconds=exp_seconds)
+        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
+            build_json = json.load(fp)
+        self._contract: Contract = Contract(build_json)
+        self._token_key = pyseto.Key.new(version=4, purpose="local", key=os.getenv("TOKEN_SECRET"))
+
         self._actions: List[Action] = [self._create_account_action(config.constructor_args),
                                        self._deploy_contract_action(config.constructor_value, config.constructor_args),
                                        self._get_flag_action(config.flag, config.solved_event)]
         if config.show_source:
             self._actions.append(self._show_source_action(build_path))
-
-        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
-            build_json = json.load(fp)
-        self._contract: Contract = Contract(build_json)
 
     def __getitem__(self, index: int) -> Action:
         return self._actions[index]
@@ -43,8 +42,8 @@ class ActionHandler:
     def _create_account_action(self, constructor_args: Any) -> Action:
         def action() -> int:
             account: Account = Account()
-            token: str = self._auth.create_token({"pk": account.private_key})
             print(f"[+]deployer account: {account.address}")
+            token: str = pyseto.encode(self._token_key, payload=account.private_key).decode("utf-8")
             print(f"[+]token: {token}")
             estimate_gas: int = self._contract.deploy.estimate_gas(constructor_args)
             print(f"[+]it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!")
@@ -55,12 +54,12 @@ class ActionHandler:
     def _deploy_contract_action(self, constructor_value: int, constructor_args: Any) -> Action:
         def action() -> int:
             try:
-                message: dict = self._auth.parse_token(input("[-]input your token: ").strip())
-            except PasetoException as e:
-                print(f"[+]invalid token: {e}")
+                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+            except ValueError as e:
+                print(e)
                 return 1
 
-            account: Account = Account(message["pk"])
+            account: Account = Account(private_key)
             if account.balance() == 0:
                 print(f"[+]insufficient balance of {account.address}")
                 return 1
@@ -76,12 +75,12 @@ class ActionHandler:
     def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
             try:
-                message: dict = self._auth.parse_token(input("[-]input your token: ").strip())
-            except PasetoException as e:
-                print(f"[+]invalid token: {e}")
+                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+            except ValueError as e:
+                print(e)
                 return 1
 
-            account: Account = Account(message["pk"])
+            account: Account = Account(private_key)
             nonce: int = account.nonce
             if nonce == 0:
                 print("[+]challenge contract has not yet been deployed")
