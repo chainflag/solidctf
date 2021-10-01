@@ -31,6 +31,13 @@ nc 127.0.0.1 20000
 ```bash
 docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/info.yaml:/home/ctf/info.yaml chainflag/eth-challenge-base
 ```
+
+or
+
+```bash
+docker-compose up -d
+```
+
 ## Development
 
 ### Prerequisites
