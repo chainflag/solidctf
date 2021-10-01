@@ -5,7 +5,7 @@ if ! brownie compile; then
 fi
 
 if [ -z "$TOKEN_SECRET" ]; then
-  TOKEN_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))")
+  TOKEN_SECRET=$(cat /dev/urandom | base64 | head -c64)
   export TOKEN_SECRET
 fi
 
