@@ -22,7 +22,7 @@ def main():
     if os.getenv("DEBUG", False):
         challenge_dir = os.path.join(challenge_dir, "example")
 
-    config = parse_config(os.path.join(challenge_dir, "info.yaml"))
+    config = parse_config(os.path.join(challenge_dir, "challenge.yml"))
     print(config.description)
     actions = ActionHandler(os.path.join(challenge_dir, "build/contracts"), config)
     for i, action in enumerate(actions):
