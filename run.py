@@ -2,6 +2,7 @@
 import os
 import signal
 
+from eth_challenge_base import __version__
 from eth_challenge_base.action import ActionHandler
 from eth_challenge_base.config import parse_config
 from eth_challenge_base.utils import Powser
@@ -20,6 +21,7 @@ def main():
 
     challenge_dir = os.path.dirname(__file__)
     if os.getenv("DEBUG", False):
+        print("version:", __version__)
         challenge_dir = os.path.join(challenge_dir, "example")
 
     config = parse_config(os.path.join(challenge_dir, "challenge.yml"))

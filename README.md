@@ -7,7 +7,7 @@ xinetd docker for building ethereum contract challenges in capture the flag (CTF
 ### Quick Demo
 
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=uri chainflag/eth-challenge-base
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=uri chainflag/eth-challenge-base:0.9.0
 nc 127.0.0.1 20000
 ```
 
@@ -29,7 +29,7 @@ nc 127.0.0.1 20000
 
 ### Start serving your contract challenge
 ```bash
-docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base
+docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.0
 ```
 
 or
