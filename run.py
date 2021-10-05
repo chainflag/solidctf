@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import signal
+import sys
 
 from eth_challenge_base import __version__
 from eth_challenge_base.action import ActionHandler
@@ -17,7 +18,7 @@ def main():
         print(powserver)
         if not powserver.verify_hash(input("[-] ??? = ")):
             print("[+] wrong proof")
-            exit(1)
+            sys.exit(1)
 
     challenge_dir = os.path.dirname(__file__)
     if os.getenv("DEBUG", False):
@@ -40,9 +41,9 @@ def main():
         else:
             if choice < 0 or choice >= len(actions):
                 print("invalid option")
-                exit(1)
+                sys.exit(1)
 
-    exit(actions[choice].handler())
+    sys.exit(actions[choice].handler())
 
 
 if __name__ == '__main__':
