@@ -29,7 +29,7 @@ def main():
     print(config.description)
     actions = ActionHandler(os.path.join(challenge_dir, "build/contracts"), config)
     for i, action in enumerate(actions):
-        print(f"{i+1} - {action.name}")
+        print(f"[{i+1}] - {action.description}")
 
     choice = None
     while choice is None:
