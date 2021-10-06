@@ -16,7 +16,7 @@ from eth_challenge_base.utils import Account, Contract
 
 @dataclass
 class Action:
-    name: str
+    description: str
     handler: Callable[[], int]
 
 
@@ -49,7 +49,7 @@ class ActionHandler:
             print(f"[+]it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!")
             return 0
 
-        return Action(name="create deployer account", handler=action)
+        return Action(description="Create an account which will be used to deploy the challenge contract", handler=action)
 
     def _deploy_contract_action(self, constructor_value: int, constructor_args: Any) -> Action:
         def action() -> int:
@@ -70,7 +70,7 @@ class ActionHandler:
             print(f"[+]transaction hash: {tx_hash}")
             return 0
 
-        return Action(name="deploy challenge", handler=action)
+        return Action(description="Deploy the challenge contract using your generated account", handler=action)
 
     def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
@@ -104,7 +104,7 @@ class ActionHandler:
                 print("[+]it seems that you have not solved the challenge~~~~")
                 return 1
 
-        return Action(name="get the flag", handler=action)
+        return Action(description="Get your flag once you meet the requirement", handler=action)
 
     def _show_source_action(self, build_path: str) -> Action:
         def action() -> int:
@@ -121,4 +121,4 @@ class ActionHandler:
 
             return 0
 
-        return Action(name="show source", handler=action)
+        return Action(description="Show the contract source code", handler=action)
