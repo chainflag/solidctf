@@ -61,11 +61,16 @@ class ActionHandler:
 
             account: Account = Account(private_key)
             if account.balance() == 0:
-                print(f"[+]insufficient balance of {account.address}")
+                print(f"[+]Don't forget to get some test ether for {account.address} first")
                 return 1
 
             contract_addr: str = account.get_deployment_address()
-            tx_hash: str = self._contract.deploy(account, constructor_value, constructor_args)
+            try:
+                tx_hash: str = self._contract.deploy(account, constructor_value, constructor_args)
+            except ValueError as e:
+                print(e)
+                print(f"Get more test ether for {account.address} and retry")
+                return 1
             print(f"[+]contract address: {contract_addr}")
             print(f"[+]transaction hash: {tx_hash}")
             return 0
