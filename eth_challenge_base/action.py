@@ -69,7 +69,6 @@ class ActionHandler:
                 tx_hash: str = self._contract.deploy(account, constructor_value, constructor_args)
             except ValueError as e:
                 print(e)
-                print(f"Get more test ether for {account.address} and retry")
                 return 1
             print(f"[+]contract address: {contract_addr}")
             print(f"[+]transaction hash: {tx_hash}")
