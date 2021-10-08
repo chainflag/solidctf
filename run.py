@@ -14,9 +14,9 @@ signal.alarm(60)
 def main():
     difficulty = int(os.getenv("POW_DIFFICULTY", '0'))
     if difficulty != 0:
-        powserver = Powser(difficulty)
-        print(powserver)
-        if not powserver.verify_hash(input("[-] ??? = ")):
+        pow_challenge = Powser(difficulty)
+        print(pow_challenge)
+        if not pow_challenge.verify_hash(input("[-] ??? = ")):
             print("[+] wrong proof")
             sys.exit(1)
 
