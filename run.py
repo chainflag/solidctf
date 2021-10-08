@@ -27,7 +27,7 @@ def main():
 
     config = parse_config(os.path.join(challenge_dir, "challenge.yml"))
     print(config.description)
-    actions = ActionHandler(os.path.join(challenge_dir, "build/contracts"), config)
+    actions = ActionHandler(challenge_dir, config)
     for i, action in enumerate(actions):
         print(f"[{i+1}] - {action.description}")
 
@@ -46,5 +46,5 @@ def main():
     sys.exit(actions[choice].handler())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

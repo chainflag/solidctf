@@ -21,8 +21,8 @@ class Action:
 
 
 class ActionHandler:
-    def __init__(self, build_path: str, config: Config) -> None:
-        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
+    def __init__(self, challenge_dir: str, config: Config) -> None:
+        with open(os.path.join(challenge_dir, "build", "contracts", f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
         self._token_key = pyseto.Key.new(version=4, purpose="local", key=os.getenv("TOKEN_SECRET", ""))
@@ -31,7 +31,7 @@ class ActionHandler:
                                        self._deploy_contract_action(config.constructor_value, config.constructor_args),
                                        self._get_flag_action(config.flag, config.solved_event)]
         if config.show_source:
-            self._actions.append(self._show_source_action(build_path))
+            self._actions.append(self._show_source_action(os.path.join(challenge_dir, "contracts")))
 
     def __getitem__(self, index: int) -> Action:
         return self._actions[index]
@@ -110,18 +110,13 @@ class ActionHandler:
 
         return Action(description="Get your flag once you meet the requirement", handler=action)
 
-    def _show_source_action(self, build_path: str) -> Action:
+    def _show_source_action(self, contract_dir: str) -> Action:
         def action() -> int:
-            for path in glob(os.path.join(build_path, "*.json")):
-                try:
-                    with open(path) as fp:
-                        build_json = json.load(fp)
-                except json.JSONDecodeError:
-                    continue
-                else:
+            for path in glob(os.path.join(contract_dir, "*.sol")):
+                with open(path) as fp:
                     print()
-                    print(build_json["sourcePath"])
-                    print(build_json["source"])
+                    print(os.path.basename(fp.name))
+                    print(fp.read())
 
             return 0
 
