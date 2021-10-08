@@ -1,10 +1,10 @@
 import json
 import os
+import re
 
 import pyseto
 
 from dataclasses import dataclass
-from glob import glob
 from typing import Callable, List, Any
 
 from eth_typing import HexStr
@@ -21,8 +21,8 @@ class Action:
 
 
 class ActionHandler:
-    def __init__(self, build_path: str, config: Config) -> None:
-        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
+    def __init__(self, challenge_dir: str, config: Config) -> None:
+        with open(os.path.join(challenge_dir, "build", "contracts", f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
         self._token_key = pyseto.Key.new(version=4, purpose="local", key=os.getenv("TOKEN_SECRET", ""))
@@ -31,7 +31,7 @@ class ActionHandler:
                                        self._deploy_contract_action(config.constructor_value, config.constructor_args),
                                        self._get_flag_action(config.flag, config.solved_event)]
         if config.show_source:
-            self._actions.append(self._show_source_action(build_path))
+            self._actions.append(self._show_source_action(os.path.join(challenge_dir, "contracts")))
 
     def __getitem__(self, index: int) -> Action:
         return self._actions[index]
@@ -49,12 +49,14 @@ class ActionHandler:
             print(f"[+]it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!")
             return 0
 
-        return Action(description="Create an account which will be used to deploy the challenge contract", handler=action)
+        return Action(description="Create an account which will be used to deploy the challenge contract",
+                      handler=action)
 
     def _deploy_contract_action(self, constructor_value: int, constructor_args: Any) -> Action:
         def action() -> int:
             try:
-                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+                private_key: str = pyseto.decode(self._token_key,
+                                                 input("[-]input your token: ").strip()).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
                 return 1
@@ -79,7 +81,8 @@ class ActionHandler:
     def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
             try:
-                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+                private_key: str = pyseto.decode(self._token_key,
+                                                 input("[-]input your token: ").strip()).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
                 return 1
@@ -110,18 +113,14 @@ class ActionHandler:
 
         return Action(description="Get your flag once you meet the requirement", handler=action)
 
-    def _show_source_action(self, build_path: str) -> Action:
+    def _show_source_action(self, contract_dir: str) -> Action:
         def action() -> int:
-            for path in glob(os.path.join(build_path, "*.json")):
-                try:
-                    with open(path) as fp:
-                        build_json = json.load(fp)
-                except json.JSONDecodeError:
-                    continue
-                else:
-                    print()
-                    print(build_json["sourcePath"])
-                    print(build_json["source"])
+            for file in os.listdir(contract_dir):
+                if re.match(".*\.(sol|vy)$", file):
+                    with open(os.path.join(contract_dir, file)) as fp:
+                        print()
+                        print(file)
+                        print(fp.read())
 
             return 0
 
