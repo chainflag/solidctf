@@ -1,10 +1,10 @@
 import json
 import os
+import re
 
 import pyseto
 
 from dataclasses import dataclass
-from glob import glob
 from typing import Callable, List, Any
 
 from eth_typing import HexStr
@@ -49,12 +49,14 @@ class ActionHandler:
             print(f"[+]it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!")
             return 0
 
-        return Action(description="Create an account which will be used to deploy the challenge contract", handler=action)
+        return Action(description="Create an account which will be used to deploy the challenge contract",
+                      handler=action)
 
     def _deploy_contract_action(self, constructor_value: int, constructor_args: Any) -> Action:
         def action() -> int:
             try:
-                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+                private_key: str = pyseto.decode(self._token_key,
+                                                 input("[-]input your token: ").strip()).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
                 return 1
@@ -79,7 +81,8 @@ class ActionHandler:
     def _get_flag_action(self, flag: str, solved_event: str) -> Action:
         def action() -> int:
             try:
-                private_key: str = pyseto.decode(self._token_key, input("[-]input your token: ").strip()).payload.decode("utf-8")
+                private_key: str = pyseto.decode(self._token_key,
+                                                 input("[-]input your token: ").strip()).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
                 return 1
@@ -112,11 +115,12 @@ class ActionHandler:
 
     def _show_source_action(self, contract_dir: str) -> Action:
         def action() -> int:
-            for path in glob(os.path.join(contract_dir, "*.sol")):
-                with open(path) as fp:
-                    print()
-                    print(os.path.basename(fp.name))
-                    print(fp.read())
+            for file in os.listdir(contract_dir):
+                if re.match(".*\.(sol|vy)$", file):
+                    with open(os.path.join(contract_dir, file)) as fp:
+                        print()
+                        print(file)
+                        print(fp.read())
 
             return 0
 
