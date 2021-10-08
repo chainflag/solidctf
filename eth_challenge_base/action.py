@@ -116,7 +116,7 @@ class ActionHandler:
     def _show_source_action(self, contract_dir: str) -> Action:
         def action() -> int:
             for file in os.listdir(contract_dir):
-                if re.match(".*\.(sol|vy)$", file):
+                if re.match(".*\.(sol|vy)$", file):  # noqa: W605
                     with open(os.path.join(contract_dir, file)) as fp:
                         print()
                         print(file)
