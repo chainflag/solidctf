@@ -52,6 +52,12 @@ pip install -r requirements.txt
 python develop.py
 ```
 
+### Format python source
+```bash
+pip install -r requirements-dev.txt
+make format
+```
+
 ## License
 
 Distributed under the MIT License. See LICENSE for more information.
