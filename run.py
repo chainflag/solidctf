@@ -12,7 +12,7 @@ signal.alarm(60)
 
 
 def main():
-    difficulty = int(os.getenv("POW_DIFFICULTY", '0'))
+    difficulty = int(os.getenv("POW_DIFFICULTY", "0"))
     if difficulty != 0:
         pow_challenge = Powser(difficulty)
         print(pow_challenge)

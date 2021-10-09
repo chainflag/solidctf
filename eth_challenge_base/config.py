@@ -28,5 +28,12 @@ def parse_config(path: str) -> Config:
     if constructor_value is None or constructor_value < 0:
         constructor_value = 0
 
-    return Config(config["contract"], config["description"], config["flag"],
-                  show_source, solved_event, constructor_args, constructor_value)
+    return Config(
+        config["contract"],
+        config["description"],
+        config["flag"],
+        show_source,
+        solved_event,
+        constructor_args,
+        constructor_value,
+    )

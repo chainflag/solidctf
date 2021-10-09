@@ -66,31 +66,27 @@ class Contract:
         return self._build["abi"]
 
     def at(self, address: ChecksumAddress) -> ContractFunctions:
-        return web3.eth.contract(
-            address=address,
-            abi=self.abi
-        ).functions
+        return web3.eth.contract(address=address, abi=self.abi).functions
 
     def get_events(self, topic: str, tx_hash: HexStr) -> Iterable[EventData]:
         tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
-        return web3.eth.contract(abi=self.abi).events[topic]().processReceipt(tx_receipt)
+        return (
+            web3.eth.contract(abi=self.abi).events[topic]().processReceipt(tx_receipt)
+        )
 
 
 class ContractConstructor:
     def __init__(self, parent: "Contract") -> None:
-        self._instance = web3.eth.contract(
-            abi=parent.abi,
-            bytecode=parent.bytecode
-        )
+        self._instance = web3.eth.contract(abi=parent.abi, bytecode=parent.bytecode)
 
     def __call__(
-            self,
-            sender: Account,
-            value: int = 0,
-            args: Optional[Any] = None,
-            gas_limit: Optional[int] = None,
-            gas_price: Optional[int] = None,
-            nonce: Optional[int] = None,
+        self,
+        sender: Account,
+        value: int = 0,
+        args: Optional[Any] = None,
+        gas_limit: Optional[int] = None,
+        gas_price: Optional[int] = None,
+        nonce: Optional[int] = None,
     ) -> str:
         tx: Dict = self._instance.constructor(*args).buildTransaction()
         return sender.transact(
