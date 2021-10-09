@@ -1,7 +1,7 @@
-import yaml
-
 from dataclasses import dataclass
 from typing import Any
+
+import yaml
 
 
 @dataclass(eq=False, frozen=True)

@@ -1,12 +1,10 @@
 import json
 import os
 import re
+from dataclasses import dataclass
+from typing import Any, Callable, List
 
 import pyseto
-
-from dataclasses import dataclass
-from typing import Callable, List, Any
-
 from eth_typing import HexStr
 from eth_utils import to_checksum_address
 

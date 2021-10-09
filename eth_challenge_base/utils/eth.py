@@ -1,15 +1,14 @@
+from typing import Any, Dict, Iterable, List, Optional, Union
+
 import rlp
-
-from typing import Any, Dict, List, Optional, Union, Iterable
-
+from brownie.convert import Wei
+from brownie.exceptions import VirtualMachineError
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3.auto import w3 as web3
 from web3.contract import ContractFunctions
 from web3.types import EventData
-from brownie.convert import Wei
-from brownie.exceptions import VirtualMachineError
 
 
 class Account:
