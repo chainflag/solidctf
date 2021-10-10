@@ -50,14 +50,14 @@ class ActionHandler:
     def _create_account_action(self, constructor_args: Any) -> Action:
         def action() -> int:
             account: Account = Account()
-            print(f"[+]deployer account: {account.address}")
+            print(f"[+] deployer account: {account.address}")
             token: str = pyseto.encode(
                 self._token_key, payload=account.private_key
             ).decode("utf-8")
-            print(f"[+]token: {token}")
+            print(f"[+] token: {token}")
             estimate_gas: int = self._contract.deploy.estimate_gas(constructor_args)
             print(
-                f"[+]it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!"
+                f"[+] it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!"
             )
             return 0
 
@@ -72,7 +72,7 @@ class ActionHandler:
         def action() -> int:
             try:
                 private_key: str = pyseto.decode(
-                    self._token_key, input("[-]input your token: ").strip()
+                    self._token_key, input("[-] input your token: ").strip()
                 ).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
@@ -81,7 +81,7 @@ class ActionHandler:
             account: Account = Account(private_key)
             if account.balance() == 0:
                 print(
-                    f"[+]Don't forget to get some test ether for {account.address} first"
+                    f"[+] Don't forget to get some test ether for {account.address} first"
                 )
                 return 1
 
@@ -93,8 +93,8 @@ class ActionHandler:
             except ValueError as e:
                 print(e)
                 return 1
-            print(f"[+]contract address: {contract_addr}")
-            print(f"[+]transaction hash: {tx_hash}")
+            print(f"[+] contract address: {contract_addr}")
+            print(f"[+] transaction hash: {tx_hash}")
             return 0
 
         return Action(
@@ -106,7 +106,7 @@ class ActionHandler:
         def action() -> int:
             try:
                 private_key: str = pyseto.decode(
-                    self._token_key, input("[-]input your token: ").strip()
+                    self._token_key, input("[-] input your token: ").strip()
                 ).payload.decode("utf-8")
             except ValueError as e:
                 print(e)
@@ -115,14 +115,14 @@ class ActionHandler:
             account: Account = Account(private_key)
             nonce: int = account.nonce
             if nonce == 0:
-                print("[+]challenge contract has not yet been deployed")
+                print("[+] challenge contract has not yet been deployed")
                 return 1
 
             contract_addr: str = account.get_deployment_address(nonce - 1)
             is_solved = False
             if solved_event:
                 tx_hash = input(
-                    f"[-]input tx hash that emitted {solved_event} event: "
+                    f"[-] input tx hash that emitted {solved_event} event: "
                 ).strip()
                 logs = self._contract.get_events(solved_event, HexStr(tx_hash))
                 for item in logs:
@@ -136,10 +136,10 @@ class ActionHandler:
                 )
 
             if is_solved:
-                print(f"[+]flag: {flag}")
+                print(f"[+] flag: {flag}")
                 return 0
             else:
-                print("[+]it seems that you have not solved the challenge~~~~")
+                print("[+] it seems that you have not solved the challenge~~~~")
                 return 1
 
         return Action(
