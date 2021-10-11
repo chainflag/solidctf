@@ -7,18 +7,16 @@ xinetd docker for building ethereum contract challenges in capture the flag (CTF
 ### Quick Demo
 
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=uri chainflag/eth-challenge-base:0.9.0
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=uri chainflag/eth-challenge-base:0.9.1
 nc 127.0.0.1 20000
 ```
 
 ## Usage
 
 ### Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
-* `contracts` is the challenge contract directory, and you should code [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function for the contract to check if it is solved
-* `.env` is used to set environment variables of docker container, including web3 provider, proof of work difficulty and token secret
-* `challenge.yml` is the config for specifying challenge description, flag, contract name, constructor etc. See more details in this file comments
-
-*You can build multi-contract challenges by deploying contracts in a setup contract's constructor*
+* `contracts` is the challenge contract directory, you should code [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function for the contract to check if it is solved
+* `challenge.yml` is the config for specifying challenge description, flag, contract name, constructor etc. See comments in this file for more detail
+* `.env` is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty
 
 **Environment variable defaults**
 
@@ -27,9 +25,11 @@ nc 127.0.0.1 20000
 | TOKEN_SECRET      | [/dev/urandom](https://github.com/chainflag/eth-challenge-base/blob/main/entrypoint.sh#L7-L10)
 | POW_DIFFICULTY    | 0(no proof of work)
 
+>You can build multi-contract challenges by deploying contracts in a setup contract's constructor
+
 ### Start serving your contract challenge
 ```bash
-docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.0
+docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.1
 ```
 
 or
