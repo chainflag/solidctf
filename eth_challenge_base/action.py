@@ -74,7 +74,7 @@ class ActionHandler:
                 private_key: str = pyseto.decode(
                     self._token_key, input("[-] input your token: ").strip()
                 ).payload.decode("utf-8")
-            except ValueError as e:
+            except Exception as e:
                 print(e)
                 return 1
 
@@ -90,7 +90,7 @@ class ActionHandler:
                 tx_hash: str = self._contract.deploy(
                     account, constructor_value, constructor_args
                 )
-            except ValueError as e:
+            except Exception as e:
                 print(e)
                 return 1
             print(f"[+] contract address: {contract_addr}")
