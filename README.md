@@ -15,7 +15,7 @@ nc 127.0.0.1 20000
 
 ### Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
 * `contracts` is the challenge contract directory, you should code [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function for the contract to check if it is solved
-* `challenge.yml` is the config for specifying challenge description, flag, contract name, constructor etc. See comments in this file for more detail
+* `challenge.yml` is the config for specifying challenge description, flag, contract name, constructor, gas limit etc. See comments in this file for more detail
 * `.env` is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty
 
 **Environment variable defaults**

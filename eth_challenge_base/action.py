@@ -8,7 +8,7 @@ import pyseto
 from eth_typing import HexStr
 from eth_utils import to_checksum_address
 
-from eth_challenge_base.config import Config
+from eth_challenge_base.config import Config, Constructor
 from eth_challenge_base.utils import Account, Contract
 
 
@@ -30,10 +30,8 @@ class ActionHandler:
         )
 
         self._actions: List[Action] = [
-            self._create_account_action(config.constructor_args),
-            self._deploy_contract_action(
-                config.constructor_value, config.constructor_args
-            ),
+            self._create_account_action(config.constructor),
+            self._deploy_contract_action(config.constructor),
             self._get_flag_action(config.flag, config.solved_event),
         ]
         if config.show_source:
@@ -47,7 +45,7 @@ class ActionHandler:
     def __len__(self):
         return len(self._actions)
 
-    def _create_account_action(self, constructor_args: Any) -> Action:
+    def _create_account_action(self, constructor: Constructor) -> Action:
         def action() -> int:
             account: Account = Account()
             print(f"[+] deployer account: {account.address}")
@@ -55,9 +53,13 @@ class ActionHandler:
                 self._token_key, payload=account.private_key
             ).decode("utf-8")
             print(f"[+] token: {token}")
-            estimate_gas: int = self._contract.deploy.estimate_gas(constructor_args)
+
+            gas_limit: int = (
+                constructor.gas_limit
+                or self._contract.deploy.estimate_gas(constructor.args)
+            )
             print(
-                f"[+] it will cost {estimate_gas} gas to deploy, make sure that deployer account has enough ether!"
+                f"[+] it will cost {gas_limit} gas to deploy, make sure that deployer account has enough ether!"
             )
             return 0
 
@@ -66,9 +68,7 @@ class ActionHandler:
             handler=action,
         )
 
-    def _deploy_contract_action(
-        self, constructor_value: int, constructor_args: Any
-    ) -> Action:
+    def _deploy_contract_action(self, constructor: Constructor) -> Action:
         def action() -> int:
             try:
                 private_key: str = pyseto.decode(
@@ -88,7 +88,7 @@ class ActionHandler:
             contract_addr: str = account.get_deployment_address()
             try:
                 tx_hash: str = self._contract.deploy(
-                    account, constructor_value, constructor_args
+                    account, constructor.value, constructor.args, constructor.gas_limit
                 )
             except Exception as e:
                 print(e)

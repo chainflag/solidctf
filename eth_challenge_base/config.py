@@ -5,14 +5,20 @@ import yaml
 
 
 @dataclass(eq=False, frozen=True)
+class Constructor:
+    args: Any
+    value: int
+    gas_limit: int
+
+
+@dataclass(eq=False, frozen=True)
 class Config:
     contract: str
     description: str
     flag: str
     show_source: bool
     solved_event: str
-    constructor_args: Any
-    constructor_value: int
+    constructor: Constructor
 
 
 def parse_config(path: str) -> Config:
@@ -24,6 +30,7 @@ def parse_config(path: str) -> Config:
     constructor = config.get("constructor", {})
     constructor_args = constructor.get("args", ())
     constructor_value = constructor.get("value", 0)
+    constructor_gas = constructor.get("gas", 0)
 
     if constructor_value is None or constructor_value < 0:
         constructor_value = 0
@@ -34,6 +41,5 @@ def parse_config(path: str) -> Config:
         config["flag"],
         show_source,
         solved_event,
-        constructor_args,
-        constructor_value,
+        Constructor(constructor_args, constructor_value, constructor_gas),
     )

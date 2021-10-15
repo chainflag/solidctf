@@ -1,7 +1,6 @@
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 import rlp
-from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
@@ -90,10 +89,10 @@ class ContractConstructor:
         tx: Dict = self._instance.constructor(*args).buildTransaction()
         return sender.transact(
             {
-                "value": Wei(value),
+                "value": value,
                 "nonce": nonce if nonce is not None else sender.nonce,
-                "gas": Wei(gas_limit) or tx["gas"],
-                "gasPrice": Wei(gas_price) or tx["gasPrice"],
+                "gas": gas_limit or tx["gas"],
+                "gasPrice": gas_price or tx["gasPrice"],
                 "data": tx["data"],
             },
         )

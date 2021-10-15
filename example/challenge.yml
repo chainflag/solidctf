@@ -10,7 +10,8 @@ flag: flag{placeholder}
 constructor:
   args: ["hello"]
   value: 0
+  #gas: 1000000          # The default value is the response to estimate gas JSON-RPC
 
 #show_source: False      # True(show source option available) by default, set to False for a reverse contract challenge
 
-#solved_event: SendFlag  # Default is using isSolved() view function as solved checker, but emitted event checker is also supported
+#solved_event: SendFlag  # The default is to use isSolved() view function as solved checker, but emitted event checker is also supported
