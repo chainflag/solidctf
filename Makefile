@@ -1,6 +1,6 @@
 lint:
 	black --check . --diff
-	flake8 --ignore=E501 --show-source
+	flake8 --ignore=E501,W503 --show-source
 	isort --profile black . --check --diff
 
 format:

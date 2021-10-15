@@ -2,7 +2,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
-from typing import Any, Callable, List
+from typing import Callable, List
 
 import pyseto
 from eth_typing import HexStr
