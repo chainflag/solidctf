@@ -10,10 +10,10 @@ flag: flag{placeholder}
 constructor:
   args: ["hello"]
   value: 0
-  #gas: 1000000          # The default value is the response to estimate gas JSON-RPC
+  #gas: 1000000          # The default value is the estimate gas JSON-RPC response
 
-#show_source: False      # True(show source option available) by default, set to False for a reverse contract challenge
+#show_source: False      # Show source option available by default, you need to set False for a reverse contract challenge
 
 #solved_event: SendFlag  # The default is to use isSolved() view function as solved checker, but emitted event checker is also supported
 
-#deployed_addr: 0xdac17f958d2ee523a2206206994597c13d831ec7
+#deployed_addr: 0xdac17f958d2ee523a2206206994597c13d831ec7  # Use a pre-deployed contract for all players instead of deploying individually
