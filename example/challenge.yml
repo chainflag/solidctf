@@ -15,3 +15,5 @@ constructor:
 #show_source: False      # True(show source option available) by default, set to False for a reverse contract challenge
 
 #solved_event: SendFlag  # The default is to use isSolved() view function as solved checker, but emitted event checker is also supported
+
+#deployed_addr: 0xdac17f958d2ee523a2206206994597c13d831ec7

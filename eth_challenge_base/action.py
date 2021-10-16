@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from typing import Callable, List
 
 import pyseto
-from eth_typing import HexStr
+from eth_typing import ChecksumAddress, HexStr
 from eth_utils import to_checksum_address
+from web3.exceptions import TransactionNotFound
 
 from eth_challenge_base.config import Config, Constructor
 from eth_challenge_base.utils import Account, Contract
@@ -29,11 +30,17 @@ class ActionHandler:
             version=4, purpose="local", key=os.getenv("TOKEN_SECRET", "")
         )
 
-        self._actions: List[Action] = [
-            self._create_account_action(config.constructor),
-            self._deploy_contract_action(config.constructor),
-            self._get_flag_action(config.flag, config.solved_event),
-        ]
+        self._actions: List[Action] = []
+        if not config.deployed_addr:
+            self._actions = [
+                self._create_account_action(config.constructor),
+                self._deploy_contract_action(config.constructor),
+            ]
+        self._actions.append(
+            self._get_flag_action(
+                config.flag, config.solved_event, config.deployed_addr
+            )
+        )
         if config.show_source:
             self._actions.append(
                 self._show_source_action(os.path.join(challenge_dir, "contracts"))
@@ -102,38 +109,46 @@ class ActionHandler:
             handler=action,
         )
 
-    def _get_flag_action(self, flag: str, solved_event: str) -> Action:
+    def _get_flag_action(
+        self, flag: str, solved_event: str, deployed_addr: str
+    ) -> Action:
         def action() -> int:
-            try:
-                private_key: str = pyseto.decode(
-                    self._token_key, input("[-] input your token: ").strip()
-                ).payload.decode("utf-8")
-            except ValueError as e:
-                print(e)
-                return 1
+            if not deployed_addr:
+                try:
+                    private_key: str = pyseto.decode(
+                        self._token_key, input("[-] input your token: ").strip()
+                    ).payload.decode("utf-8")
+                except ValueError as e:
+                    print(e)
+                    return 1
 
-            account: Account = Account(private_key)
-            nonce: int = account.nonce
-            if nonce == 0:
-                print("[+] challenge contract has not yet been deployed")
-                return 1
+                account: Account = Account(private_key)
+                nonce: int = account.nonce
+                if nonce == 0:
+                    print("[+] challenge contract has not yet been deployed")
+                    return 1
+                contract_addr: ChecksumAddress = account.get_deployment_address(
+                    nonce - 1
+                )
+            else:
+                contract_addr: ChecksumAddress = to_checksum_address(deployed_addr)
 
-            contract_addr: str = account.get_deployment_address(nonce - 1)
             is_solved = False
             if solved_event:
                 tx_hash = input(
                     f"[-] input tx hash that emitted {solved_event} event: "
                 ).strip()
-                logs = self._contract.get_events(solved_event, HexStr(tx_hash))
+                try:
+                    logs = self._contract.get_events(solved_event, HexStr(tx_hash))
+                except TransactionNotFound as e:
+                    print(e)
+                    return 1
+
                 for item in logs:
                     if item["address"] == contract_addr:
                         is_solved = True
             else:
-                is_solved = (
-                    self._contract.at(to_checksum_address(contract_addr))
-                    .isSolved()
-                    .call()
-                )
+                is_solved = self._contract.at(contract_addr).isSolved().call()
 
             if is_solved:
                 print(f"[+] flag: {flag}")
