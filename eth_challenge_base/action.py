@@ -2,6 +2,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Callable, List
 
 import pyseto
@@ -10,7 +11,7 @@ from eth_utils import to_checksum_address
 from web3.exceptions import TransactionNotFound
 
 from eth_challenge_base.config import Config, Constructor
-from eth_challenge_base.utils import Account, Contract
+from eth_challenge_base.utils import Account, Contract, web3
 
 
 @dataclass
@@ -65,9 +66,13 @@ class Actions:
                 constructor.gas_limit
                 or self._contract.deploy.estimate_gas(constructor.args)
             )
-            print(
-                f"[+] it will cost {gas_limit} gas to deploy, make sure that deployer account has enough ether!"
+            total_value: Decimal = web3.fromWei(
+                constructor.value + gas_limit * web3.eth.gas_price, "ether"
             )
+            print(
+                f"[+] please transfer {(total_value+Decimal('0.000005')).quantize(Decimal('0.00000'))} test ether to the deployer account for next step"
+            )
+
             return 0
 
         return Action(
@@ -88,7 +93,7 @@ class Actions:
             account: Account = Account(private_key)
             if account.balance() == 0:
                 print(
-                    f"[+] Don't forget to get some test ether for {account.address} first"
+                    f"[+] don't forget to get some test ether for {account.address} first"
                 )
                 return 1
 

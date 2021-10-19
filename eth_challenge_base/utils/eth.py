@@ -5,7 +5,7 @@ from brownie.exceptions import VirtualMachineError
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
-from web3.auto import w3 as web3
+from web3 import Web3
 from web3.contract import ContractFunctions
 from web3.types import EventData
 
@@ -99,3 +99,6 @@ class ContractConstructor:
 
     def estimate_gas(self, args: Optional[Any] = None) -> int:
         return self._instance.constructor(*args).estimateGas()
+
+
+web3 = Web3()
