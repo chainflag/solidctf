@@ -19,7 +19,7 @@ class Action:
     handler: Callable[[], int]
 
 
-class ActionHandler:
+class Actions:
     def __init__(self, challenge_dir: str, config: Config) -> None:
         with open(
             os.path.join(challenge_dir, "build", "contracts", f"{config.contract}.json")

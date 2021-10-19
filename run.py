@@ -4,7 +4,7 @@ import signal
 import sys
 
 from eth_challenge_base import __version__
-from eth_challenge_base.action import ActionHandler
+from eth_challenge_base.action import Actions
 from eth_challenge_base.config import parse_config
 from eth_challenge_base.utils import Powser
 
@@ -15,7 +15,7 @@ def main():
     difficulty = int(os.getenv("POW_DIFFICULTY", "0"))
     if difficulty != 0:
         pow_challenge = Powser(difficulty)
-        print(pow_challenge)
+        print(f"[+] {pow_challenge}")
         if not pow_challenge.verify_hash(input("[-] ??? = ")):
             print("[+] wrong proof")
             sys.exit(1)
@@ -27,7 +27,7 @@ def main():
 
     config = parse_config(os.path.join(challenge_dir, "challenge.yml"))
     print(config.description)
-    actions = ActionHandler(challenge_dir, config)
+    actions = Actions(challenge_dir, config)
     for i, action in enumerate(actions):
         print(f"[{i+1}] - {action.description}")
 

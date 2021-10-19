@@ -12,7 +12,7 @@ class Powser:
         )
 
     def __str__(self):
-        return f"[+] sha256({ self._prefix } + ???).binary.endswith('{ '0' * self._difficulty }')"
+        return f"sha256({ self._prefix } + ???).binary.endswith('{ '0' * self._difficulty }')"
 
     def verify_hash(self, answer: str) -> bool:
         h = hashlib.sha256()
