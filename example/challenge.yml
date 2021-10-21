@@ -10,7 +10,7 @@ flag: flag{placeholder}
 constructor:
   args: ["hello"]
   value: 0
-  #gas: 1000000          # The default value is the estimate gas JSON-RPC response
+  #gas: 1000000          # The default value is the response value of the eth_estimateGas JSON-RPC
 
 #show_source: False      # Show source option available by default, you need to set False for a reverse contract challenge
 
