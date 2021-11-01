@@ -140,11 +140,21 @@ class Actions:
 
             is_solved = False
             if solved_event:
-                tx_hash = input(
-                    f"[-] input tx hash that emitted {solved_event} event: "
-                ).strip()
+                tx_hash = HexStr(
+                    input(
+                        f"[-] input tx hash that emitted {solved_event} event: "
+                    ).strip()
+                )
+                if (
+                    web3.eth.block_number
+                    - web3.eth.get_transaction(tx_hash)["blockNumber"]
+                    > 128
+                ):
+                    print("cannot use transactions on blocks older than 128 blocks")
+                    return 1
+
                 try:
-                    logs = self._contract.get_events(solved_event, HexStr(tx_hash))
+                    logs = self._contract.get_events(solved_event, tx_hash)
                 except TransactionNotFound as e:
                     print(e)
                     return 1
