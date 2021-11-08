@@ -145,20 +145,23 @@ class Actions:
                         f"[-] input tx hash that emitted {solved_event} event: "
                     ).strip()
                 )
-                if (
-                    web3.eth.block_number
-                    - web3.eth.get_transaction(tx_hash)["blockNumber"]
-                    > 128
-                ):
-                    print("cannot use transactions on blocks older than 128 blocks")
-                    return 1
 
                 try:
-                    logs = self._contract.get_events(solved_event, tx_hash)
+                    tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
                 except TransactionNotFound as e:
                     print(e)
                     return 1
 
+                block_interval: int = web3.eth.block_number - tx_receipt["blockNumber"]
+                if block_interval > 128:
+                    print("cannot use transactions on blocks older than 128 blocks")
+                    return 1
+
+                logs = (
+                    web3.eth.contract(abi=self._contract.abi)
+                    .events[solved_event]()
+                    .processReceipt(tx_receipt)
+                )
                 for item in logs:
                     if item["address"] == contract_addr:
                         is_solved = True
