@@ -70,7 +70,7 @@ class Actions:
                 constructor.value + gas_limit * web3.eth.gas_price, "ether"
             )
             print(
-                f"[+] please transfer {(total_value+Decimal('0.000005')).quantize(Decimal('0.00000'))} test ether to the deployer account for next step"
+                f"[+] please transfer {(total_value+Decimal('0.0005')).quantize(Decimal('0.000'))} test ether to the deployer account for next step"
             )
 
             return 0
