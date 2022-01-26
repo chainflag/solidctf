@@ -7,7 +7,7 @@ xinetd docker for building ethereum contract challenges in capture the flag (CTF
 ### Quick Demo
 
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=uri chainflag/eth-challenge-base:0.9.2
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://ropsten.infura.io/v3/YOUR-PROJECT-ID chainflag/eth-challenge-base:0.9.2
 nc 127.0.0.1 20000
 ```
 
@@ -37,6 +37,8 @@ or
 ```bash
 docker-compose up -d
 ```
+
+> You can build an anti-plagiarism private Ethereum network for CTF challenges by referring [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth)
 
 ## Development
 
