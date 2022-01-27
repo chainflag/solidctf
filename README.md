@@ -1,5 +1,10 @@
 # eth-challenge-base
 
+![Docker CI](https://img.shields.io/github/workflow/status/chainflag/eth-challenge-base/Docker%20Image%20CI/main)
+![Docker size](https://badgen.net/docker/size/chainflag/eth-challenge-base/latest?color=cyan)
+![Latest tag](https://badgen.net/github/tag/chainflag/eth-challenge-base)
+![License: MIT](https://badgen.net/github/license/chainflag/eth-challenge-base?color=yellow)
+
 xinetd docker for building ethereum contract challenges in capture the flag (CTF).
 
 ## Getting Started
