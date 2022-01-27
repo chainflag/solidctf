@@ -1,8 +1,8 @@
 import json
 import os
-import re
 from dataclasses import dataclass
 from decimal import Decimal
+from glob import glob
 from typing import Callable, List
 
 import pyseto
@@ -22,9 +22,8 @@ class Action:
 
 class Actions:
     def __init__(self, challenge_dir: str, config: Config) -> None:
-        with open(
-            os.path.join(challenge_dir, "build", "contracts", f"{config.contract}.json")
-        ) as fp:
+        build_path = os.path.join(challenge_dir, "build", "contracts")
+        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
         self._token_key = pyseto.Key.new(
@@ -43,9 +42,7 @@ class Actions:
             )
         )
         if config.show_source:
-            self._actions.append(
-                self._show_source_action(os.path.join(challenge_dir, "contracts"))
-            )
+            self._actions.append(self._show_source_action(build_path))
 
     def __getitem__(self, index: int) -> Action:
         return self._actions[index]
@@ -179,14 +176,22 @@ class Actions:
             description="Get your flag once you meet the requirement", handler=action
         )
 
-    def _show_source_action(self, contract_dir: str) -> Action:
+    def _show_source_action(self, build_path: str) -> Action:
         def action() -> int:
-            for file in os.listdir(contract_dir):
-                if re.match(".*\.(sol|vy)$", file):  # noqa: W605
-                    with open(os.path.join(contract_dir, file)) as fp:
-                        print()
-                        print(file)
-                        print(fp.read())
+            contract_source = set()
+            for path in glob(os.path.join(build_path, "*.json")):
+                try:
+                    with open(path) as fp:
+                        build_json = json.load(fp)
+                except json.JSONDecodeError:
+                    continue
+                else:
+                    source_path: str = build_json["sourcePath"]
+                    # To prevent printing the source code with multiple contracts repeatedly
+                    if source_path not in contract_source:
+                        print(source_path)
+                        print(build_json["source"])
+                        contract_source.add(source_path)
 
             return 0
 
