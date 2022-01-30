@@ -3,15 +3,13 @@ import os
 import signal
 import sys
 
-from eth_challenge_base import __version__
 from eth_challenge_base.action import Actions
 from eth_challenge_base.config import parse_config
 from eth_challenge_base.utils import Powser
 
-signal.alarm(60)
 
-
-def main():
+def conn_handler(project_path: str = "."):
+    signal.alarm(60)
     difficulty = int(os.getenv("POW_DIFFICULTY", "0"))
     if difficulty != 0:
         pow_challenge = Powser(difficulty)
@@ -20,14 +18,10 @@ def main():
             print("[+] wrong proof")
             sys.exit(1)
 
-    challenge_dir = os.path.dirname(__file__)
-    if os.getenv("DEBUG", False):
-        print("version:", __version__)
-        challenge_dir = os.path.join(challenge_dir, "example")
-
-    config = parse_config(os.path.join(challenge_dir, "challenge.yml"))
+    project_path = os.path.join(os.path.dirname(__file__), project_path)
+    config = parse_config(os.path.join(project_path, "challenge.yml"))
     print(config.description)
-    actions = Actions(challenge_dir, config)
+    actions = Actions(project_path, config)
     for i, action in enumerate(actions):
         print(f"[{i+1}] - {action.description}")
 
@@ -47,4 +41,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    conn_handler()

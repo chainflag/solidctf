@@ -21,9 +21,9 @@ class Action:
 
 
 class Actions:
-    def __init__(self, challenge_dir: str, config: Config) -> None:
-        build_path = os.path.join(challenge_dir, "build", "contracts")
-        with open(os.path.join(build_path, f"{config.contract}.json")) as fp:
+    def __init__(self, project_path: str, config: Config) -> None:
+        self._artifact_path = os.path.join(project_path, "build", "contracts")
+        with open(os.path.join(self._artifact_path, f"{config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
         self._token_key = pyseto.Key.new(
@@ -42,7 +42,7 @@ class Actions:
             )
         )
         if config.show_source:
-            self._actions.append(self._show_source_action(build_path))
+            self._actions.append(self._show_source_action())
 
     def __getitem__(self, index: int) -> Action:
         return self._actions[index]
@@ -176,10 +176,10 @@ class Actions:
             description="Get your flag once you meet the requirement", handler=action
         )
 
-    def _show_source_action(self, build_path: str) -> Action:
+    def _show_source_action(self) -> Action:
         def action() -> int:
             contract_source = set()
-            for path in glob(os.path.join(build_path, "*.json")):
+            for path in glob(os.path.join(self._artifact_path, "*.json")):
                 try:
                     with open(path) as fp:
                         build_json = json.load(fp)
