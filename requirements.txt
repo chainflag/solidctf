@@ -1,7 +1,7 @@
-eth-brownie>=1.17.0,<2.0.0
+eth-brownie>=1.18.0,<2.0.0
 
 hexbytes~=0.2.2
-pyseto~=1.1.0
+pyseto~=1.6.5
 PyYAML~=5.4
-rlp~=1.2.0
-web3~=5.24.0
+rlp~=2.0.1
+web3~=5.27.0
