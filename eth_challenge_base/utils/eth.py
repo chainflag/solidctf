@@ -41,15 +41,14 @@ class Account:
     def transact(self, tx: Dict) -> str:
         tx["chainId"] = web3.eth.chain_id
         tx["from"] = self.address
+        if "nonce" not in tx.keys():
+            tx["nonce"] = self.nonce
+
         try:
             signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
-            txid = web3.eth.send_raw_transaction(signed_tx)
+            return web3.eth.send_raw_transaction(signed_tx).hex()
         except ValueError as e:
-            exc = VirtualMachineError(e)
-            if not hasattr(exc, "txid"):
-                raise exc from None
-        else:
-            return txid.hex()
+            raise VirtualMachineError(e) from None
 
 
 class Contract:
@@ -76,19 +75,11 @@ class ContractConstructor:
         value: int = 0,
         args: Optional[Any] = None,
         gas_limit: Optional[int] = None,
-        gas_price: Optional[int] = None,
-        nonce: Optional[int] = None,
     ) -> str:
         tx: Dict = self._instance.constructor(*args).buildTransaction()
-        return sender.transact(
-            {
-                "value": value,
-                "nonce": nonce if nonce is not None else sender.nonce,
-                "gas": gas_limit or tx["gas"],
-                "gasPrice": gas_price or tx["gasPrice"],
-                "data": tx["data"],
-            },
-        )
+        tx["value"] = value
+        tx["gas"] = gas_limit or tx["gas"]
+        return sender.transact(tx)
 
     def estimate_gas(self, args: Optional[Any] = None) -> int:
         return self._instance.constructor(*args).estimateGas()
