@@ -6,7 +6,7 @@ from eth_typing import ChecksumAddress
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
-from web3.contract import ContractFunctions
+from web3.contract import ContractConstructor, ContractFunctions
 from web3.middleware import geth_poa_middleware
 
 
@@ -56,7 +56,7 @@ class Contract:
     def __init__(self, build: Dict) -> None:
         self._build = build.copy()
         self.bytecode = build["bytecode"]
-        self.deploy = ContractConstructor(self)
+        self.deploy = ContractCreation(self)
 
     @property
     def abi(self) -> List:
@@ -65,10 +65,13 @@ class Contract:
     def at(self, address: ChecksumAddress) -> ContractFunctions:
         return web3.eth.contract(address=address, abi=self.abi).functions
 
+    def constructor(self, args: Optional[Any] = None) -> ContractConstructor:
+        return ContractConstructor(web3, self.abi, self.bytecode, *args)
 
-class ContractConstructor:
+
+class ContractCreation:
     def __init__(self, parent: "Contract") -> None:
-        self._instance = web3.eth.contract(abi=parent.abi, bytecode=parent.bytecode)
+        self._parent = parent
 
     def __call__(
         self,
@@ -77,13 +80,17 @@ class ContractConstructor:
         args: Optional[Any] = None,
         gas_limit: Optional[int] = None,
     ) -> str:
-        tx: Dict = self._instance.constructor(*args).buildTransaction()
-        tx["value"] = value
-        tx["gas"] = gas_limit or tx["gas"]
-        return sender.transact(tx)
+        return sender.transact(
+            {
+                "value": value,
+                "gas": gas_limit or self.estimate_gas(args),
+                "gasPrice": web3.eth.gas_price,
+                "data": self._parent.constructor(args).data_in_transaction,
+            },
+        )
 
     def estimate_gas(self, args: Optional[Any] = None) -> int:
-        return self._instance.constructor(*args).estimateGas()
+        return self._parent.constructor(args).estimateGas()
 
 
 web3 = Web3()
