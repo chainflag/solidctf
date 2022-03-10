@@ -43,7 +43,15 @@ or
 docker-compose up -d
 ```
 
-> You can build an anti-plagiarism private Ethereum network for CTF challenges by referring [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth)
+## Advanced
+
+### Use private PoA Ethereum network as challenge environment
+1. Launch an anti-plagiarism PoA network by referring [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth)
+2. Keep the web3 provider defaults in the `.env` file
+3. Run the docker container using the following command
+```bash
+docker run -d -p 20000:20000 --network geth_default --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.2
+```
 
 ## Development
 

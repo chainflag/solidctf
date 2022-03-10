@@ -39,3 +39,6 @@ services:
     depends_on:
       - geth
     restart: always
+
+networks:
+  default:
