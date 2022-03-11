@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   challenge:
-    image: chainflag/eth-challenge-base:0.9.2
+    image: chainflag/eth-challenge-base:0.9.3
     ports:
       - "20000:20000"
     env_file:
