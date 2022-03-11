@@ -7,7 +7,6 @@ from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
 from web3.contract import ContractConstructor, ContractFunctions
-from web3.middleware import geth_poa_middleware
 
 
 class Account:
@@ -94,4 +93,3 @@ class ContractCreation:
 
 
 web3 = Web3()
-web3.middleware_onion.inject(geth_poa_middleware, layer=0)
