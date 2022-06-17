@@ -82,14 +82,14 @@ class ContractCreation:
         return sender.transact(
             {
                 "value": value,
-                "gas": gas_limit or self.estimate_gas(args),
+                "gas": gas_limit or self.estimate_gas(value, args),
                 "gasPrice": web3.eth.gas_price,
                 "data": self._parent.constructor(args).data_in_transaction,
             },
         )
 
-    def estimate_gas(self, args: Optional[Any] = None) -> int:
-        return self._parent.constructor(args).estimateGas()
+    def estimate_gas(self, value: int = 0, args: Optional[Any] = None) -> int:
+        return self._parent.constructor(args).estimateGas({"value": value})
 
 
 web3 = Web3()

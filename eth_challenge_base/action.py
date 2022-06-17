@@ -61,13 +61,16 @@ class Actions:
 
             gas_limit: int = (
                 constructor.gas_limit
-                or self._contract.deploy.estimate_gas(constructor.args)
+                or self._contract.deploy.estimate_gas(
+                    constructor.value, constructor.args
+                )
             )
+
             total_value: Decimal = web3.fromWei(
                 constructor.value + gas_limit * web3.eth.gas_price, "ether"
             )
             print(
-                f"[+] please transfer {(total_value+Decimal('0.0005')).quantize(Decimal('0.000'))} test ether to the deployer account for next step"
+                f"[+] please transfer {(total_value + Decimal('0.0005')).quantize(Decimal('0.000'))} test ether to the deployer account for next step"
             )
 
             return 0
