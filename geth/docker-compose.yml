@@ -9,7 +9,7 @@ services:
     restart: always
 
   proxy:
-    image: nginx:1.20-alpine
+    image: nginx:1.22-alpine
     container_name: rpcproxy
     ports:
       - "8545:8545"
@@ -23,11 +23,10 @@ services:
     restart: always
 
   faucet:
-    image: chainflag/eth-faucet:1.0.0
+    image: chainflag/eth-faucet:1.1.0
     container_name: ethfaucet
     environment:
       - WEB3_PROVIDER=http://geth:8545
-      - KEYSTORE=/app/keystore
     ports:
       - "8080:8080"
     links:
@@ -35,7 +34,7 @@ services:
     volumes:
       - ./config/keystore:/app/keystore
       - ./config/password.txt:/app/password.txt
-    command: -interval 1
+    command: -wallet.keyjson /app/keystore -wallet.keypass /app/password.txt -faucet.minutes 1
     depends_on:
       - geth
     restart: always
