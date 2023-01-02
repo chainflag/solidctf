@@ -1,7 +1,6 @@
 FROM ethereum/client-go:v1.10.17
 
-RUN apk add --no-cache jq
-
+COPY genesis.json.template /genesis.json.template
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

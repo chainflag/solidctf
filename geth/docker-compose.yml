@@ -2,14 +2,18 @@ version: "3.3"
 services:
   geth:
     build: .
+    restart: unless-stopped
     container_name: ethereum
+    expose:
+      - "8545"
+    env_file:
+      - .env
     volumes:
-      - ./config:/config
       - ./data:/data
-    restart: always
 
   proxy:
     image: nginx:1.22-alpine
+    restart: unless-stopped
     container_name: rpcproxy
     ports:
       - "8545:8545"
@@ -20,24 +24,20 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - geth
-    restart: always
 
   faucet:
     image: chainflag/eth-faucet:1.1.0
+    restart: unless-stopped
     container_name: ethfaucet
-    environment:
-      - WEB3_PROVIDER=http://geth:8545
     ports:
       - "8080:8080"
     links:
       - geth
-    volumes:
-      - ./config/keystore:/app/keystore
-      - ./config/password.txt:/app/password.txt
-    command: -wallet.keyjson /app/keystore -wallet.keypass /app/password.txt -faucet.minutes 1
+    env_file:
+      - .env
+    command: -wallet.provider http://geth:8545 -wallet.privkey ${BLOCK_SIGNER_PRIVATE_KEY} -faucet.minutes 1
     depends_on:
       - geth
-    restart: always
 
 networks:
   default:
