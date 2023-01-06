@@ -13,7 +13,7 @@ So the idea of this project is to disable several RPC methods (e.g. `eth_getBloc
 ### Clone the Repository
 
 ```
-https://github.com/chainflag/eth-challenge-base.git
+git clone https://github.com/chainflag/eth-challenge-base.git
 cd eth-challenge-base/geth
 ```
 

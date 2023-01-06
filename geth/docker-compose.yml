@@ -1,15 +1,21 @@
 version: "3.3"
 services:
   geth:
-    build: .
+    image: ethereum/client-go:v1.10.17
     restart: unless-stopped
     container_name: ethereum
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "/entrypoint.sh"
     expose:
       - "8545"
     env_file:
       - .env
     volumes:
       - ./data:/data
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./genesis.json.template:/genesis.json.template
 
   proxy:
     image: nginx:1.22-alpine
