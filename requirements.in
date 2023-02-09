@@ -1,6 +1,6 @@
-eth-brownie>=1.18.0,<2.0.0
+eth-brownie>=1.19.0,<2.0.0
 hexbytes<1
-pyseto>=1.6.0,<2
+pyseto>=1.7.0,<2
 pyyaml>=5.4.0,<6
 rlp<3
-web3>=5.27.0,<6
+web3>=5.31.3,<6
