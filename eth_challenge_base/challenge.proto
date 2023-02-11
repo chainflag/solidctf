@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package chainflag.ctf.challenge;
+option go_package = "challenge";
+
+message Info {
+  string description = 1;
+  bool show_source = 2;
+  string solved_event = 3;
+  string deployed_addr = 4;
+}
+
+message Playground {
+  string address = 1;
+  string token = 2;
+  float value = 3;
+}
+
+message Contract {
+  string address = 1;
+  string tx_hash = 2;
+}
+
+message Flag {
+  string flag = 1;
+}
+
+message Event {
+  optional string tx_hash = 1;
+}
+
+message SourceCode {
+  map<string, string> source = 1;
+}
+
+message Empty {}
+
+service Challenge {
+  rpc GetChallengeInfo(Empty) returns (Info);
+  rpc NewPlayground(Empty) returns (Playground);
+  rpc DeployContract(Empty) returns (Contract);
+  rpc GetFlag(Event) returns (Flag);
+  rpc GetSourceCode(Empty) returns (SourceCode);
+}

@@ -11,33 +11,30 @@ xinetd docker for building ethereum contract challenges in capture the flag (CTF
 
 ### Quick Demo
 
+Use the following command to run a quick demo:
+
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://ropsten.infura.io/v3/YOUR-PROJECT-ID chainflag/eth-challenge-base
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://rpc.sepolia.org chainflag/eth-challenge-base
 nc 127.0.0.1 20000
 ```
 
 ## Usage
 
 ### Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
-* `contracts` is the challenge contract directory, you should code [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function for the contract to check if it is solved
-* `challenge.yml` is the config for specifying challenge description, flag, contract name, constructor, gas limit etc. See comments in this file for more detail
-* `.env` is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty
-
-**Environment variable defaults**
-
-| Name              | Default Value
-| ----------------- | ----------------------------------
-| TOKEN_SECRET      | [openssl rand](https://github.com/chainflag/eth-challenge-base/blob/main/entrypoint.sh#L16)
-| POW_DIFFICULTY    | 0(no proof of work)
+* The `contracts` directory is where you should code the challenge contract, specifically, you need to implement [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function to check if it is solved.
+* The `challenge.yml` file is the config for specifying challenge description, flag, contract name, constructor, gas limit etc. Refer to the comments in this file for more details.
+* The `.env` file is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty.
 
 >You can build multi-contract challenges by deploying contracts in a setup contract's constructor
 
 ### Start serving your contract challenge
+
+Use the following command to start serving the contract challenge:
 ```bash
 docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
 ```
 
-or
+Alternatively, you can use docker-compose:
 
 ```bash
 docker-compose up -d
@@ -46,9 +43,9 @@ docker-compose up -d
 ## Advance
 
 ### Use private PoA Ethereum network as challenge environment
-1. Launch an anti-plagiarism PoA network by referring [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth)
-2. Keep the web3 provider defaults in the `.env` file
-3. Run the docker container using the following command
+1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth).
+2. Keep the web3 provider defaults in the `.env` file.
+3. Run the docker container using the following command:
 ```bash
 docker run -d -p 20000:20000 --network geth_default --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
 ```
@@ -56,20 +53,30 @@ docker run -d -p 20000:20000 --network geth_default --env-file .env -v `pwd`/con
 ## Development
 
 ### Prerequisites
+
+Before you start, make sure you have the following installed:
+
+* Docker
 * Python3
-* Packages
+* Required packages (`pip install -r requirements.txt`)
+
+### Run in development mode
+1. Generate protobuf code and run server
 ```bash
-pip install -r requirements.txt
+make protoc
+export WEB3_PROVIDER_URI="your web3 provider"
+make dev
 ```
 
-### Run in dev mode
+2. Open another terminal to run client
 ```bash
-python develop.py
+python run.py
 ```
 
 ### Format python source
+
+To format the Python source code, you will need to install additional packages (`pip install -r requirements-dev.txt`) and run the following command:
 ```bash
-pip install -r requirements-dev.txt
 make format
 ```
 

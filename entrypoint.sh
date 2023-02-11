@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -r -d '' COMPILE <<- 'EOF'
+read -r -d '' COMPILE <<-'EOF'
 from brownie import project
 from solcx import install
 
@@ -12,9 +12,11 @@ if ! python3 -c "$COMPILE"; then
   exit 1
 fi
 
-if [ -z "$TOKEN_SECRET" ]; then
-  TOKEN_SECRET=$(openssl rand -base64 32 | tr -d /=+)
-  export TOKEN_SECRET
-fi
+gunicorn server:app \
+  --daemon \
+  --workers 4 \
+  --worker-class uvicorn.workers.UvicornWorker \
+  --access-logfile /var/log/ctf/gunicorn.access.log \
+  --capture-output
 
 source /xinetd.sh

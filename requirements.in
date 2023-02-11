@@ -1,6 +1,9 @@
 eth-brownie>=1.19.0,<2.0.0
+gunicorn>=20.1.0
 hexbytes<1
 pyseto>=1.7.0,<2
 pyyaml>=5.4.0,<6
 rlp<3
+twirp>=0.0.7
+uvicorn>=0.20.0
 web3>=5.31.3,<6
