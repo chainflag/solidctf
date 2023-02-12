@@ -4,16 +4,28 @@ function access(r) {
     var payload = JSON.parse(r.requestBody);
   } catch (error) {
     r.return(415, createErrorResponse(-32700, "Parse error", null));
+    return;
   }
 
   var errorResponse = validateMethod(payload);
   if (errorResponse) {
     r.return(401, errorResponse);
+    return;
   }
 
-  r.internalRedirect("@jsonrpc", function (response) {
-    r.return(200, clearBlockTransactions(payload.method, response));
-  });
+  r.subrequest("/rpc")
+    .then((res) => {
+      var responseBody = res.responseBody;
+      if (payload.method == "eth_getBlockByNumber") {
+        var data = JSON.parse(res.responseBody);
+        if (data.result) {
+          data.result.transactions = [];
+        }
+        responseBody = JSON.stringify(data);
+      }
+      r.return(res.status, responseBody);
+    })
+    .catch((_) => r.return(500));
 }
 
 function createErrorResponse(code, message, id) {
@@ -57,18 +69,6 @@ function validateMethod(payload) {
   if (!whitelist.includes(payload.method)) {
     return createErrorResponse(-32004, "Method not supported", payload.id);
   }
-}
-
-function clearBlockTransactions(method, response) {
-  if (method !== "eth_getBlockByNumber") {
-    return response;
-  }
-
-  var data = JSON.parse(response);
-  if (data.result) {
-    data.result.transactions = [];
-  }
-  return JSON.stringify(data);
 }
 
 export default { access };
