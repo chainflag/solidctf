@@ -12,7 +12,7 @@ from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerExcep
 
 from eth_challenge_base.config import Config
 from eth_challenge_base.ethereum import Account, Contract
-from eth_challenge_base.generated import challenge_pb2
+from eth_challenge_base.protobuf import challenge_pb2
 
 AUTHORIZATION_KEY = "authorization"
 

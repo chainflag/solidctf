@@ -1,13 +1,13 @@
 FROM golang:1.20-buster as protoc
 
-WORKDIR /protobuf
+WORKDIR /protobuf-builder
 
 RUN apt update && apt install unzip
 RUN go install github.com/verloop/twirpy/protoc-gen-twirpy@latest
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.5/protoc-3.19.5-linux-x86_64.zip && unzip protoc-3.19.5-linux-x86_64.zip && cp bin/protoc /bin/protoc
 
-COPY eth_challenge_base/challenge.proto .
-RUN mkdir generated && protoc --python_out=./generated --twirpy_out=./generated ./challenge.proto
+COPY eth_challenge_base/protobuf protobuf
+RUN protoc --python_out=. --twirpy_out=. protobuf/challenge.proto
 
 FROM python:3.9-slim-buster
 
@@ -25,7 +25,7 @@ COPY run.py .
 COPY server.py .
 COPY example .
 COPY eth_challenge_base eth_challenge_base
-COPY --from=protoc /protobuf/generated eth_challenge_base/generated
+COPY --from=protoc /protobuf-builder/protobuf eth_challenge_base
 
 COPY xinetd.sh /xinetd.sh
 COPY entrypoint.sh /entrypoint.sh

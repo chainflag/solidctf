@@ -3,7 +3,7 @@ import os
 from twirp.asgi import TwirpASGIApp
 
 from eth_challenge_base.config import parse_config
-from eth_challenge_base.generated import challenge_twirp
+from eth_challenge_base.protobuf import challenge_twirp
 from eth_challenge_base.service import ChallengeService
 
 

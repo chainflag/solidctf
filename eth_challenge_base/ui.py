@@ -8,7 +8,7 @@ from typing import Callable, List
 from twirp.context import Context
 from twirp.exceptions import TwirpServerException
 
-from eth_challenge_base.generated import challenge_pb2, challenge_twirp
+from eth_challenge_base.protobuf import challenge_pb2, challenge_twirp
 from eth_challenge_base.service import AUTHORIZATION_KEY
 
 
