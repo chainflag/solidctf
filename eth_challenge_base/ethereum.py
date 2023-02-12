@@ -2,11 +2,12 @@ from typing import Any, Dict, List, Optional, Union
 
 import rlp
 from brownie.exceptions import VirtualMachineError
-from eth_typing import ChecksumAddress
+from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
-from web3.contract import ContractConstructor, ContractFunctions
+from web3.contract import ContractConstructor
+from web3.exceptions import ValidationError
 
 
 class Account:
@@ -41,11 +42,12 @@ class Account:
     def transact(self, tx: Dict) -> str:
         tx["chainId"] = web3.eth.chain_id
         tx["from"] = self.address
+        tx["gasPrice"] = web3.eth.gas_price
         if "nonce" not in tx.keys():
             tx["nonce"] = self.nonce
 
         try:
-            signed_tx = self._account.sign_transaction(tx).rawTransaction  # type: ignore
+            signed_tx = self._account.sign_transaction(tx).rawTransaction
             return web3.eth.send_raw_transaction(signed_tx).hex()
         except ValueError as e:
             raise VirtualMachineError(e) from None
@@ -61,8 +63,35 @@ class Contract:
     def abi(self) -> List:
         return self._build["abi"]
 
-    def at(self, address: ChecksumAddress) -> ContractFunctions:
-        return web3.eth.contract(address=address, abi=self.abi).functions
+    def is_solved(
+        self, address: ChecksumAddress, solved_event: str = None, tx_hash: HexStr = None
+    ) -> bool:
+        is_solved = False
+        if solved_event:
+            tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
+            block_interval: int = web3.eth.block_number - tx_receipt["blockNumber"]
+            if block_interval > 128:
+                raise ValidationError(
+                    "cannot use transactions on blocks older than 128 blocks"
+                )
+
+            logs = (
+                web3.eth.contract(abi=self.abi)
+                .events[solved_event]()
+                .processReceipt(tx_receipt)
+            )
+            for item in logs:
+                if item["address"] == address:
+                    is_solved = True
+
+        else:
+            is_solved = (
+                web3.eth.contract(address=address, abi=self.abi)
+                .functions.isSolved()
+                .call()
+            )
+
+        return is_solved
 
     def constructor(self, args: Optional[Any] = None) -> ContractConstructor:
         return ContractConstructor(web3, self.abi, self.bytecode, *args)
@@ -82,14 +111,22 @@ class ContractCreation:
         return sender.transact(
             {
                 "value": value,
-                "gas": gas_limit or self.estimate_gas(value, args),
-                "gasPrice": web3.eth.gas_price,
+                "gas": gas_limit or self._estimate_gas(value, args),
                 "data": self._parent.constructor(args).data_in_transaction,
             },
         )
 
-    def estimate_gas(self, value: int = 0, args: Optional[Any] = None) -> int:
+    def _estimate_gas(self, value: int = 0, args: Optional[Any] = None) -> int:
         return self._parent.constructor(args).estimateGas({"value": value})
+
+    def estimate_total_value(
+        self,
+        value: int = 0,
+        args: Optional[Any] = None,
+        gas_limit: Optional[int] = None,
+    ) -> int:
+        gas_limit: int = gas_limit or self._estimate_gas(value, args)
+        return value + gas_limit * web3.eth.gas_price
 
 
 web3 = Web3()

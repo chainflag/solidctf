@@ -1,4 +1,6 @@
+import hashlib
 import os
+import secrets
 import sys
 from dataclasses import dataclass
 from typing import Callable, List
@@ -8,7 +10,6 @@ from twirp.exceptions import TwirpServerException
 
 from eth_challenge_base.generated import challenge_pb2, challenge_twirp
 from eth_challenge_base.service import AUTHORIZATION_KEY
-from eth_challenge_base.utils import Powser
 
 
 @dataclass
@@ -148,3 +149,22 @@ class UserInterface:
             print(value)
 
         return 0
+
+
+class Powser:
+    def __init__(self, difficulty: int, prefix_length: int = 8):
+        self._difficulty = difficulty
+        self._prefix = (
+            secrets.token_urlsafe(prefix_length)[:prefix_length]
+            .replace("-", "b")
+            .replace("_", "a")
+        )
+
+    def __str__(self):
+        return f"sha256({ self._prefix } + ???).binary.endswith('{ '0' * self._difficulty }')"
+
+    def verify_hash(self, answer: str) -> bool:
+        h = hashlib.sha256()
+        h.update((self._prefix + answer).encode())
+        bits = "".join(bin(i)[2:].zfill(8) for i in h.digest())
+        return bits.endswith("0" * self._difficulty)

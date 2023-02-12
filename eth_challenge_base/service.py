@@ -6,14 +6,13 @@ from glob import glob
 
 import pyseto
 from eth_typing import ChecksumAddress, HexStr
-from eth_utils import to_checksum_address
+from eth_utils import to_checksum_address, units
 from twirp import ctxkeys, errors
 from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerException
-from web3.exceptions import TransactionNotFound
 
 from eth_challenge_base.config import Config
+from eth_challenge_base.ethereum import Account, Contract
 from eth_challenge_base.generated import challenge_pb2
-from eth_challenge_base.utils import Account, Contract, web3
 
 AUTHORIZATION_KEY = "authorization"
 
@@ -46,18 +45,18 @@ class ChallengeService(object):
         )
 
         constructor = self._config.constructor
-        gas_limit: int = constructor.gas_limit or self._contract.deploy.estimate_gas(
-            constructor.value, constructor.args
+        total_value: int = self._contract.deploy.estimate_total_value(
+            constructor.value, constructor.args, constructor.gas_limit
         )
 
-        total_value: Decimal = web3.fromWei(
-            constructor.value + gas_limit * web3.eth.gas_price, "ether"
+        ether_value: Decimal = Decimal(total_value) / units.units["ether"] + Decimal(
+            "0.0005"
         )
 
         return challenge_pb2.Playground(
             address=account.address,
             token=token,
-            value=float(round(total_value + Decimal("0.0005"), 3)),
+            value=float(round(ether_value, 3)),
         )
 
     def DeployContract(self, context, empty):
@@ -97,7 +96,6 @@ class ChallengeService(object):
                 self._config.deployed_addr
             )
 
-        is_solved = False
         if self._config.solved_event:
             if not event.HasField("tx_hash"):
                 raise RequiredArgument(argument="tx_hash")
@@ -110,30 +108,16 @@ class ChallengeService(object):
                 raise InvalidArgument(argument="tx_hash", error="is invalid")
 
             try:
-                tx_receipt = web3.eth.get_transaction_receipt(HexStr(tx_hash))
-            except TransactionNotFound as e:
+                is_solved = self._contract.is_solved(
+                    contract_addr, self._config.solved_event, HexStr(tx_hash)
+                )
+            except Exception as e:
                 raise TwirpServerException(
                     code=errors.Errors.FailedPrecondition,
                     message=str(e),
                 )
-
-            block_interval: int = web3.eth.block_number - tx_receipt["blockNumber"]
-            if block_interval > 128:
-                raise TwirpServerException(
-                    code=errors.Errors.InvalidArgument,
-                    message="cannot use transactions on blocks older than 128 blocks",
-                )
-
-            logs = (
-                web3.eth.contract(abi=self._contract.abi)
-                .events[self._config.solved_event]()
-                .processReceipt(tx_receipt)
-            )
-            for item in logs:
-                if item["address"] == contract_addr:
-                    is_solved = True
         else:
-            is_solved = self._contract.at(contract_addr).isSolved().call()
+            is_solved = self._contract.is_solved(contract_addr)
 
         if not is_solved:
             raise TwirpServerException(
