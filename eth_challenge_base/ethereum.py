@@ -7,7 +7,7 @@ from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
 from web3.contract import ContractConstructor
-from web3.exceptions import ValidationError
+from web3.exceptions import ContractLogicError, ValidationError
 
 
 class Account:
@@ -83,13 +83,15 @@ class Contract:
             for item in logs:
                 if item["address"] == address:
                     is_solved = True
-
         else:
-            is_solved = (
-                web3.eth.contract(address=address, abi=self.abi)
-                .functions.isSolved()
-                .call()
-            )
+            try:
+                is_solved = (
+                    web3.eth.contract(address=address, abi=self.abi)
+                    .functions.isSolved()
+                    .call()
+                )
+            except ContractLogicError:
+                return False
 
         return is_solved
 
