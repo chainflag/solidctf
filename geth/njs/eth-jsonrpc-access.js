@@ -16,7 +16,10 @@ function access(r) {
   r.subrequest("/rpc")
     .then((res) => {
       var responseBody = res.responseBody;
-      if (payload.method == "eth_getBlockByNumber") {
+      if (
+        payload.method === "eth_getBlockByHash" ||
+        payload.method === "eth_getBlockByNumber"
+      ) {
         var data = JSON.parse(res.responseBody);
         if (data.result) {
           data.result.transactions = [];
@@ -47,6 +50,7 @@ function validateMethod(payload) {
     "eth_estimateGas",
     "eth_gasPrice",
     "eth_getBalance",
+    "eth_getBlockByHash",
     "eth_getBlockByNumber",
     "eth_getCode",
     "eth_getStorageAt",
