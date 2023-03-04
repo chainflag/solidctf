@@ -1,10 +1,16 @@
 #!/bin/bash
 
 read -r -d '' COMPILE <<-'EOF'
+import os
+
 from brownie import project
 from solcx import install
 
-install.BINARY_DOWNLOAD_BASE = "https://cdn.jsdelivr.net/gh/ethereum/solc-bin@latest/{}-amd64/{}"
+default = os.getenv(
+    "SOLC_DOWNLOAD_BASE", "https://cdn.jsdelivr.net/gh/ethereum/solc-bin@latest"
+).rstrip("/")
+
+install.BINARY_DOWNLOAD_BASE = default + "/{}-amd64/{}"
 project.load(".")
 EOF
 
