@@ -7,6 +7,7 @@ from glob import glob
 import pyseto
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import to_checksum_address, units
+from pyseto import Token
 from twirp import ctxkeys, errors
 from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerException
 
@@ -21,7 +22,9 @@ class ChallengeService(object):
     def __init__(self, project_path: str, config: Config) -> None:
         self._config = config
         self._artifact_path = os.path.join(project_path, "build", "contracts")
-        with open(os.path.join(self._artifact_path, f"{config.contract}.json")) as fp:
+        with open(
+            os.path.join(self._artifact_path, f"{self._config.contract}.json")
+        ) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json)
         self._token_key = pyseto.Key.new(
@@ -40,9 +43,9 @@ class ChallengeService(object):
 
     def NewPlayground(self, context, empty):
         account: Account = Account()
-        token: str = pyseto.encode(self._token_key, payload=account.private_key).decode(
-            "utf-8"
-        )
+        token: str = pyseto.encode(
+            self._token_key, payload=account.private_key, footer=self._config.contract
+        ).decode("utf-8")
 
         constructor = self._config.constructor
         total_value: int = self._contract.deploy.estimate_total_value(
@@ -150,12 +153,16 @@ class ChallengeService(object):
             raise RequiredArgument(argument="authorization")
 
         try:
-            private_key: str = pyseto.decode(
-                self._token_key, token.strip()
-            ).payload.decode("utf-8")
+            decoded_token: Token = pyseto.decode(self._token_key, token.strip())
         except Exception as e:
             raise TwirpServerException(
                 code=errors.Errors.Unauthenticated, message=str(e)
             )
 
-        return Account(private_key)
+        if self._config.contract != decoded_token.footer.decode("utf-8"):
+            raise TwirpServerException(
+                code=errors.Errors.Unauthenticated,
+                message="token was not issued by this challenge",
+            )
+
+        return Account(decoded_token.payload.decode("utf-8"))
