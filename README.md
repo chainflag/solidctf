@@ -80,13 +80,9 @@ To format the Python source code, you will need to install additional packages (
 make format
 ```
 
+## Acknowledgements
+Many thanks to [JetBrains](https://jb.gg/OpenSourceSupport) for providing their excellent tools and an open source license to support the development of this project.
+
 ## License
 
 Distributed under the MIT License. See LICENSE for more information.
-
-## Acknowledgements
-
-* https://github.com/eth-brownie/brownie
-* https://github.com/hitcxy/blockchain_template
-* https://github.com/paradigm-operations/paradigm-ctf-2021
-* https://github.com/balsn/proof-of-work
