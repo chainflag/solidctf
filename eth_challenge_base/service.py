@@ -26,7 +26,7 @@ class ChallengeService(object):
             os.path.join(self._artifact_path, f"{self._config.contract}.json")
         ) as fp:
             build_json = json.load(fp)
-        self._contract: Contract = Contract(build_json)
+        self._contract: Contract = Contract(build_json["abi"], build_json["bytecode"])
         self._token_key = pyseto.Key.new(
             version=4,
             purpose="local",

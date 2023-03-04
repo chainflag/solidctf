@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import rlp
 from brownie.exceptions import VirtualMachineError
@@ -8,6 +8,7 @@ from hexbytes import HexBytes
 from web3 import Web3
 from web3.contract import ContractConstructor
 from web3.exceptions import ContractLogicError, ValidationError
+from web3.types import ABI
 
 
 class Account:
@@ -54,14 +55,10 @@ class Account:
 
 
 class Contract:
-    def __init__(self, build: Dict) -> None:
-        self._build = build.copy()
-        self.bytecode = build["bytecode"]
+    def __init__(self, abi: ABI, bytecode: HexStr) -> None:
+        self.abi = abi
+        self.bytecode = bytecode
         self.deploy = ContractCreation(self)
-
-    @property
-    def abi(self) -> List:
-        return self._build["abi"]
 
     def is_solved(
         self, address: ChecksumAddress, solved_event: str = None, tx_hash: HexStr = None
