@@ -48,9 +48,15 @@ class ChallengeService(object):
         ).decode("utf-8")
 
         constructor = self._config.constructor
-        total_value: int = self._contract.deploy.estimate_total_value(
-            constructor.value, constructor.args, constructor.gas_limit
-        )
+        try:
+            total_value: int = self._contract.deploy.estimate_total_value(
+                constructor.value, constructor.args, constructor.gas_limit
+            )
+        except Exception as e:
+            raise TwirpServerException(
+                code=errors.Errors.Internal,
+                message=str(e),
+            )
 
         ether_value: Decimal = Decimal(total_value) / units.units["ether"] + Decimal(
             "0.0005"

@@ -1,11 +1,11 @@
 from typing import Any, Dict, Optional, Union
 
 import rlp
-from brownie.exceptions import VirtualMachineError
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import keccak, to_checksum_address
 from hexbytes import HexBytes
 from web3 import Web3
+from web3.constants import ADDRESS_ZERO
 from web3.contract import ContractConstructor
 from web3.exceptions import ContractLogicError, ValidationError
 from web3.types import ABI
@@ -47,11 +47,8 @@ class Account:
         if "nonce" not in tx.keys():
             tx["nonce"] = self.nonce
 
-        try:
-            signed_tx = self._account.sign_transaction(tx).rawTransaction
-            return web3.eth.send_raw_transaction(signed_tx).hex()
-        except ValueError as e:
-            raise VirtualMachineError(e) from None
+        signed_tx = self._account.sign_transaction(tx).rawTransaction
+        return web3.eth.send_raw_transaction(signed_tx).hex()
 
 
 class Contract:
@@ -110,13 +107,20 @@ class ContractCreation:
         return sender.transact(
             {
                 "value": value,
-                "gas": gas_limit or self._estimate_gas(value, args),
+                "gas": gas_limit or self._estimate_gas(sender.address, value, args),
                 "data": self._parent.constructor(args).data_in_transaction,
             },
         )
 
-    def _estimate_gas(self, value: int = 0, args: Optional[Any] = None) -> int:
-        return self._parent.constructor(args).estimateGas({"value": value})
+    def _estimate_gas(
+        self,
+        form: ChecksumAddress,
+        value: int = 0,
+        args: Optional[Any] = None,
+    ) -> int:
+        return self._parent.constructor(args).estimateGas(
+            {"from": form, "value": value}
+        )
 
     def estimate_total_value(
         self,
@@ -124,7 +128,7 @@ class ContractCreation:
         args: Optional[Any] = None,
         gas_limit: Optional[int] = None,
     ) -> int:
-        gas_limit: int = gas_limit or self._estimate_gas(value, args)
+        gas_limit: int = gas_limit or self._estimate_gas(ADDRESS_ZERO, value, args)
         return value + gas_limit * web3.eth.gas_price
 
 
