@@ -13,7 +13,7 @@ service ctf
     log_type        = FILE /var/log/ctf/xinetd.log
     log_on_success  = PID HOST EXIT DURATION
     log_on_failure  = HOST ATTEMPT
-    port            = ${PORT:-20000}
+    port            = 20000
     bind            = 0.0.0.0
     server          = /usr/local/bin/python3
     server_args     = /home/ctf/run.py

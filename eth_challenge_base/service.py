@@ -127,6 +127,9 @@ class ChallengeService(object):
         return challenge_pb2.Flag(flag=self._config.flag)
 
     def GetSourceCode(self, context, token):
+        if not self._config.show_source:
+            return challenge_pb2.SourceCode()
+
         contract_source = dict()
         for path in glob(os.path.join(self._artifact_path, "*.json")):
             try:
