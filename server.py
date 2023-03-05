@@ -8,7 +8,7 @@ from eth_challenge_base.service import ChallengeService
 
 
 def create_service(project_path: str = "."):
-    if os.getenv("APP_ENV") == "development":
+    if os.environ.get("DEBUG_MODE", False):
         project_path = "example"
     project_path = os.path.join(os.path.dirname(__file__), project_path)
     config = parse_config(os.path.join(project_path, "challenge.yml"))

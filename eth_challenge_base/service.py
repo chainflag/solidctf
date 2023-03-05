@@ -62,6 +62,7 @@ class ChallengeService(object):
             "0.0005"
         )
 
+        context.get_logger().info("Playground account %s was created", account.address)
         return challenge_pb2.Playground(
             address=account.address,
             token=token,
@@ -76,8 +77,9 @@ class ChallengeService(object):
                 message=f"send test ether to {account.address} first",
             )
 
-        constructor = self._config.constructor
+        contract_addr: str = account.get_deployment_address()
         try:
+            constructor = self._config.constructor
             tx_hash: str = self._contract.deploy(
                 account, constructor.value, constructor.args, constructor.gas_limit
             )
@@ -87,7 +89,12 @@ class ChallengeService(object):
                 message=str(e),
             )
 
-        contract_addr: str = account.get_deployment_address()
+        context.get_logger().info(
+            "Contract %s was deployed by %s. Transaction hash %s",
+            contract_addr,
+            account.address,
+            tx_hash,
+        )
         return challenge_pb2.Contract(address=contract_addr, tx_hash=tx_hash)
 
     def GetFlag(self, context, event):
@@ -133,6 +140,12 @@ class ChallengeService(object):
                 code=errors.Errors.InvalidArgument,
                 message="you haven't solved this challenge",
             )
+
+        context.get_logger().info(
+            "Flag was captured in contract %s deployed by %s",
+            contract_addr,
+            account.address,
+        )
         return challenge_pb2.Flag(flag=self._config.flag)
 
     def GetSourceCode(self, context, token):

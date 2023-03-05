@@ -1,6 +1,6 @@
 dev:
 	cd example && brownie compile
-	APP_ENV=development uvicorn server:app --reload
+	DEBUG_MODE=True uvicorn server:app --reload
 
 protoc:
 	docker build --target protoc -t protoc --platform linux/amd64 .
