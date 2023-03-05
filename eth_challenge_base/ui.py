@@ -15,7 +15,7 @@ from eth_challenge_base.service import AUTHORIZATION_KEY
 @dataclass
 class Action:
     description: str
-    handler: Callable[[], int]
+    handler: Callable[[], None]
 
 
 class UserInterface:
@@ -78,16 +78,18 @@ class UserInterface:
                 break
             print("invalid option, please try again.")
 
-        sys.exit(self._actions[choice].handler())
-
-    def _handle_new_playground(self) -> int:
         try:
-            response = self._client.NewPlayground(
-                ctx=Context(), request=challenge_pb2.Empty()
-            )
+            self._actions[choice].handler()
         except TwirpServerException as e:
             print(e.message)
-            return 1
+            sys.exit(1)
+        else:
+            sys.exit(0)
+
+    def _handle_new_playground(self) -> None:
+        response = self._client.NewPlayground(
+            ctx=Context(), request=challenge_pb2.Empty()
+        )
 
         print(f"[+] deployer account: {response.address}")
         print(f"[+] token: {response.token}")
@@ -95,24 +97,17 @@ class UserInterface:
             f"[+] please transfer more than {round(response.value, 3)} test ether to the deployer account for next step"
         )
 
-        return 0
-
-    def _handle_deploy_contract(self) -> int:
+    def _handle_deploy_contract(self) -> None:
         token: str = input("[-] input your token: ").strip()
         context = Context(headers={AUTHORIZATION_KEY: token})
-        try:
-            response = self._client.DeployContract(
-                ctx=context, request=challenge_pb2.Empty()
-            )
-        except TwirpServerException as e:
-            print(e.message)
-            return 1
+        response = self._client.DeployContract(
+            ctx=context, request=challenge_pb2.Empty()
+        )
 
         print(f"[+] contract address: {response.address}")
         print(f"[+] transaction hash: {response.tx_hash}")
-        return 0
 
-    def _handle_get_flag(self) -> int:
+    def _handle_get_flag(self) -> None:
         context = Context()
         if not self._info.deployed_addr:
             token: str = input("[-] input your token: ").strip()
@@ -125,30 +120,17 @@ class UserInterface:
             ).strip()
             request = challenge_pb2.Event(tx_hash=tx_hash)
 
-        try:
-            response = self._client.GetFlag(ctx=context, request=request)
-        except TwirpServerException as e:
-            print(e.message)
-            return 1
-
+        response = self._client.GetFlag(ctx=context, request=request)
         print(f"[+] flag: {response.flag}")
-        return 0
 
-    def _handle_get_sourcecode(self) -> int:
-        try:
-            response = self._client.GetSourceCode(
-                ctx=Context(), request=challenge_pb2.Empty()
-            )
-        except TwirpServerException as e:
-            print(e.message)
-            return 1
-
+    def _handle_get_sourcecode(self) -> None:
+        response = self._client.GetSourceCode(
+            ctx=Context(), request=challenge_pb2.Empty()
+        )
         source = response.source
         for key, value in source.items():
             print(key)
             print(value)
-
-        return 0
 
 
 class Powser:
