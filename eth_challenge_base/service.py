@@ -9,11 +9,12 @@ from eth_typing import ChecksumAddress, HexStr
 from eth_utils import to_checksum_address, units
 from pyseto import Token
 from twirp import ctxkeys, errors
+from twirp.asgi import TwirpASGIApp
 from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerException
 
-from eth_challenge_base.config import Config
+from eth_challenge_base.config import Config, parse_config
 from eth_challenge_base.ethereum import Account, Contract
-from eth_challenge_base.protobuf import challenge_pb2
+from eth_challenge_base.protobuf import challenge_pb2, challenge_twirp
 
 AUTHORIZATION_KEY = "authorization"
 
@@ -185,3 +186,12 @@ class ChallengeService(object):
             )
 
         return Account(decoded_token.payload.decode("utf-8"))
+
+
+def create_asgi_application(project_root: str):
+    config = parse_config(os.path.join(project_root, "challenge.yml"))
+    application = TwirpASGIApp()
+    application.add_service(
+        challenge_twirp.ChallengeServer(service=ChallengeService(project_root, config))
+    )
+    return application
