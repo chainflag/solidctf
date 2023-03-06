@@ -7,14 +7,17 @@ GETH_KEYSTORE_DIR=$GETH_DATA_DIR/keystore
 
 CHAIN_ID="${CHAIN_ID:-$((RANDOM + 10000))}"
 
+[ -f "$GETH_DATA_DIR/block-signer-address" ] && BLOCK_SIGNER_ADDRESS_WITHOUT_0X=$(cat "$GETH_DATA_DIR/block-signer-address")
+
 if [ ! -d "$GETH_KEYSTORE_DIR" ]; then
     echo "$GETH_KEYSTORE_DIR missing, running account import"
-    echo -n "${BLOCK_SIGNER_PRIVATE_KEY_PASSWORD:-chainflag}" >"$GETH_DATA_DIR"/password
-    echo -n "$BLOCK_SIGNER_PRIVATE_KEY" >"$GETH_DATA_DIR"/block-signer-key
+    echo -n "${BLOCK_SIGNER_PRIVATE_KEY_PASSWORD:-chainflag}" >"$GETH_DATA_DIR/password"
+    echo -n "$BLOCK_SIGNER_PRIVATE_KEY" >"$GETH_DATA_DIR/block-signer-key"
     BLOCK_SIGNER_ADDRESS_WITHOUT_0X=$(geth account import \
         --datadir="$GETH_DATA_DIR" \
-        --password="$GETH_DATA_DIR"/password \
-        "$GETH_DATA_DIR"/block-signer-key | grep -oE '[[:xdigit:]]{40}')
+        --password="$GETH_DATA_DIR/password" \
+        "$GETH_DATA_DIR/block-signer-key" | grep -oE '[[:xdigit:]]{40}')
+    echo -n "$BLOCK_SIGNER_ADDRESS_WITHOUT_0X" >"$GETH_DATA_DIR/block-signer-address"
     echo "geth account import complete"
 fi
 
@@ -27,7 +30,7 @@ fi
 
 exec geth \
     --datadir="$GETH_DATA_DIR" \
-    --password="$GETH_DATA_DIR"/password \
+    --password="$GETH_DATA_DIR/password" \
     --allow-insecure-unlock \
     --unlock="$BLOCK_SIGNER_ADDRESS_WITHOUT_0X" \
     --mine \
