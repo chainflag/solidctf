@@ -62,6 +62,7 @@ Before you start, make sure you have the following installed:
 
 ### Run in development mode
 1. Generate protobuf code and run server
+
 ```bash
 make protoc
 export WEB3_PROVIDER_URI="your web3 provider"
@@ -69,13 +70,15 @@ make dev
 ```
 
 2. Open another terminal to run client
+
 ```bash
-python run.py
+python client.py
 ```
 
 ### Format python source
 
 To format the Python source code, you will need to install additional packages (`pip install -r requirements-dev.txt`) and run the following command:
+
 ```bash
 make format
 ```

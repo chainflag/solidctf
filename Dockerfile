@@ -21,7 +21,7 @@ RUN apt update \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY run.py .
+COPY client.py .
 COPY server.py .
 COPY example .
 COPY eth_challenge_base eth_challenge_base
