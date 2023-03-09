@@ -3,6 +3,7 @@ import os
 import secrets
 from decimal import Decimal
 from glob import glob
+from typing import Dict
 
 import pyseto
 from eth_typing import ChecksumAddress, HexStr
@@ -20,14 +21,12 @@ AUTHORIZATION_KEY = "authorization"
 
 
 class ChallengeService(object):
-    def __init__(self, project_path: str, config: Config) -> None:
+    def __init__(self, artifact_path: str, config: Config) -> None:
         self._config = config
-        self._artifact_path = os.path.join(project_path, "build", "contracts")
-        with open(
-            os.path.join(self._artifact_path, f"{self._config.contract}.json")
-        ) as fp:
+        with open(os.path.join(artifact_path, f"{self._config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json["abi"], build_json["bytecode"])
+        self._source_code: Dict[str, str] = self._load_challenge_source(artifact_path)
         self._token_key = pyseto.Key.new(
             version=4,
             purpose="local",
@@ -150,11 +149,13 @@ class ChallengeService(object):
         return challenge_pb2.Flag(flag=self._config.flag)
 
     def GetSourceCode(self, context, token):
-        if not self._config.show_source:
-            return challenge_pb2.SourceCode()
+        return challenge_pb2.SourceCode(source=self._source_code)
 
-        contract_source = dict()
-        for path in glob(os.path.join(self._artifact_path, "*.json")):
+    def _load_challenge_source(self, artifact_path) -> Dict[str, str]:
+        source: Dict[str, str] = {}
+        if not self._config.show_source:
+            return source
+        for path in glob(os.path.join(artifact_path, "*.json")):
             try:
                 with open(path) as fp:
                     build_json = json.load(fp)
@@ -162,9 +163,9 @@ class ChallengeService(object):
                 continue
             else:
                 source_path: str = build_json["sourcePath"]
-                contract_source[source_path] = build_json["source"]
+                source[source_path] = build_json["source"]
 
-        return challenge_pb2.SourceCode(source=contract_source)
+        return source
 
     def _recoverAcctFromCtx(self, context) -> Account:
         header = context.get(ctxkeys.RAW_HEADERS)
@@ -188,10 +189,11 @@ class ChallengeService(object):
         return Account(decoded_token.payload.decode("utf-8"))
 
 
-def create_asgi_application(project_root: str):
+def create_asgi_application(project_root: str) -> TwirpASGIApp:
     config = parse_config(os.path.join(project_root, "challenge.yml"))
+    artifact_path = os.path.join(project_root, "build", "contracts")
+
     application = TwirpASGIApp()
-    application.add_service(
-        challenge_twirp.ChallengeServer(service=ChallengeService(project_root, config))
-    )
+    service = ChallengeService(artifact_path, config)
+    application.add_service(challenge_twirp.ChallengeServer(service=service))
     return application
