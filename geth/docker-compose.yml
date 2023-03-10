@@ -41,7 +41,7 @@ services:
       - geth
     env_file:
       - .env
-    command: -wallet.provider http://geth:8545 -wallet.privkey ${BLOCK_SIGNER_PRIVATE_KEY} -faucet.minutes 1
+    command: -wallet.provider http://geth:8545 -wallet.privkey ${ALLOC_ADDRESS_PRIVATE_KEY} -faucet.minutes 1
     depends_on:
       - geth
 
