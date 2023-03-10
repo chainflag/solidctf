@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Tuple
 
 import yaml
 
 
 @dataclass(eq=False, frozen=True)
 class Constructor:
-    args: Any
+    args: Tuple
     value: int
     gas_limit: int
 
@@ -44,5 +44,5 @@ def parse_config(path: str) -> Config:
         show_source,
         solved_event,
         deployed_addr,
-        Constructor(constructor_args, constructor_value, constructor_gas),
+        Constructor(tuple(constructor_args), constructor_value, constructor_gas),
     )

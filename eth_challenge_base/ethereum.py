@@ -1,4 +1,5 @@
-from typing import Any, Dict, Optional, Union
+from functools import lru_cache
+from typing import Any, Dict, Optional, Tuple, Union
 
 import rlp
 from eth_typing import ChecksumAddress, HexStr
@@ -101,35 +102,42 @@ class ContractCreation:
         self,
         sender: Account,
         value: int = 0,
-        args: Optional[Any] = None,
         gas_limit: Optional[int] = None,
+        args: Optional[Tuple] = None,
     ) -> str:
         return sender.transact(
             {
                 "value": value,
                 "gas": gas_limit or self._estimate_gas(sender.address, value, args),
-                "data": self._parent.constructor(args).data_in_transaction,
+                "data": self.get_creation_code(args),
             },
         )
 
+    @lru_cache(maxsize=3)
     def _estimate_gas(
         self,
-        form: ChecksumAddress,
+        sender: ChecksumAddress,
         value: int = 0,
-        args: Optional[Any] = None,
+        args: Optional[Tuple] = None,
     ) -> int:
         return self._parent.constructor(args).estimateGas(
-            {"from": form, "value": value}
+            {"from": sender, "value": value}
         )
 
     def estimate_total_value(
         self,
         value: int = 0,
-        args: Optional[Any] = None,
         gas_limit: Optional[int] = None,
+        args: Optional[Tuple] = None,
     ) -> int:
         gas_limit: int = gas_limit or self._estimate_gas(ADDRESS_ZERO, value, args)
         return value + gas_limit * web3.eth.gas_price
+
+    def get_creation_code(
+        self,
+        args: Optional[Tuple] = None,
+    ):
+        return self._parent.constructor(args).data_in_transaction
 
 
 web3 = Web3()

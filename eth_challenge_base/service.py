@@ -47,10 +47,10 @@ class ChallengeService(object):
             self._token_key, payload=account.private_key, footer=self._config.contract
         ).decode("utf-8")
 
-        constructor = self._config.constructor
         try:
+            constructor = self._config.constructor
             total_value: int = self._contract.deploy.estimate_total_value(
-                constructor.value, constructor.args, constructor.gas_limit
+                constructor.value, constructor.gas_limit, constructor.args
             )
         except Exception as e:
             raise TwirpServerException(
@@ -81,7 +81,7 @@ class ChallengeService(object):
         try:
             constructor = self._config.constructor
             tx_hash: str = self._contract.deploy(
-                account, constructor.value, constructor.args, constructor.gas_limit
+                account, constructor.value, constructor.gas_limit, constructor.args
             )
         except Exception as e:
             raise TwirpServerException(
