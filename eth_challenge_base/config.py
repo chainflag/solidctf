@@ -15,7 +15,6 @@ class Constructor:
 class Config:
     contract: str
     description: str
-    flag: str
     show_source: bool
     solved_event: str
     constructor: Constructor
@@ -38,7 +37,6 @@ def parse_config(path: str) -> Config:
     return Config(
         config["contract"],
         config["description"],
-        config["flag"],
         show_source,
         solved_event,
         Constructor(tuple(constructor_args), constructor_value, constructor_gas),

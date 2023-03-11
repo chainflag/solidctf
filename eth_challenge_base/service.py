@@ -21,8 +21,10 @@ AUTHORIZATION_KEY = "authorization"
 
 
 class ChallengeService:
-    def __init__(self, artifact_path: str, config: Config) -> None:
+    def __init__(self, project_root: str, config: Config) -> None:
         self._config = config
+        self._project_root = project_root
+        artifact_path = os.path.join(self._project_root, "build", "contracts")
         with open(os.path.join(artifact_path, f"{self._config.contract}.json")) as fp:
             build_json = json.load(fp)
         self._contract: Contract = Contract(build_json["abi"], build_json["bytecode"])
@@ -140,7 +142,15 @@ class ChallengeService:
             contract_addr,
             account.address,
         )
-        return challenge_pb2.Flag(flag=self._config.flag)
+
+        flag: str = "flag{placeholder}"
+        try:
+            file = os.path.join(self._project_root, "flag.txt")
+            with open(file) as fp:
+                flag = fp.readline()
+        except FileNotFoundError:
+            context.get_logger().warn("flag file %s not found", file)
+        return challenge_pb2.Flag(flag=flag)
 
     def GetSourceCode(self, context, token):
         return challenge_pb2.SourceCode(source=self._source_code)
@@ -185,9 +195,7 @@ class ChallengeService:
 
 def create_asgi_application(project_root: str) -> TwirpASGIApp:
     config = parse_config(os.path.join(project_root, "challenge.yml"))
-    artifact_path = os.path.join(project_root, "build", "contracts")
-
     application = TwirpASGIApp()
-    service = ChallengeService(artifact_path, config)
+    service = ChallengeService(project_root, config)
     application.add_service(challenge_twirp.ChallengeServer(service=service))
     return application
