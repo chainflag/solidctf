@@ -20,7 +20,7 @@ from eth_challenge_base.protobuf import challenge_pb2, challenge_twirp
 AUTHORIZATION_KEY = "authorization"
 
 
-class ChallengeService(object):
+class ChallengeService:
     def __init__(self, artifact_path: str, config: Config) -> None:
         self._config = config
         with open(os.path.join(artifact_path, f"{self._config.contract}.json")) as fp:
