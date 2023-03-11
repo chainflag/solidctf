@@ -23,7 +23,7 @@ fi
 
 if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
     echo "$GETH_CHAINDATA_DIR missing, running init"
-    sed "s/\${CHAIN_ID}/$CHAIN_ID/g; s/\${BLOCK_SIGNER_ADDRESS_WITHOUT_0X}/$ALLOC_ADDRESS_WITHOUT_0X/g" /genesis.json.template >/genesis.json
+    sed "s/\${CHAIN_ID}/$CHAIN_ID/g; s/\${ALLOC_ADDRESS_WITHOUT_0X}/$ALLOC_ADDRESS_WITHOUT_0X/g" /genesis.json.template >/genesis.json
     geth init --datadir="$GETH_DATA_DIR" /genesis.json
     echo "geth init complete"
 fi
@@ -35,6 +35,8 @@ exec geth \
     --unlock="$ALLOC_ADDRESS_WITHOUT_0X" \
     --mine \
     --networkid="$CHAIN_ID" --nodiscover \
-    --http --http.addr=0.0.0.0 --http.port=8545 \
+    --http --http.addr=0.0.0.0 --http.port=18545 \
     --http.api=eth,net,web3 \
-    --http.corsdomain='*' --http.vhosts='*'
+    --http.corsdomain='*' --http.vhosts='*' &
+
+exec nginx -g "daemon off;"

@@ -1,49 +1,30 @@
 version: "3.3"
 services:
-  geth:
-    image: ethereum/client-go:v1.10.17
+  ethereum:
+    build: .
     restart: unless-stopped
-    container_name: ethereum
-    entrypoint:
-      - /bin/sh
-      - -c
-      - "/entrypoint.sh"
-    expose:
-      - "8545"
+    container_name: geth_with_proxy
+    ports:
+      - "8545:8545"
     env_file:
       - .env
     volumes:
       - ./data:/data
-      - ./entrypoint.sh:/entrypoint.sh
-      - ./genesis.json.template:/genesis.json.template
-
-  proxy:
-    image: nginx:1.22-alpine
-    restart: unless-stopped
-    container_name: rpcproxy
-    ports:
-      - "8545:8545"
-    links:
-      - geth
-    volumes:
-      - ./njs:/etc/nginx/njs
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - geth
+      - ./logs:/var/log/nginx
 
   faucet:
     image: chainflag/eth-faucet:1.1.0
     restart: unless-stopped
-    container_name: ethfaucet
+    container_name: eth_faucet
     ports:
       - "8080:8080"
     links:
-      - geth
+      - ethereum
     env_file:
       - .env
-    command: -wallet.provider http://geth:8545 -wallet.privkey ${ALLOC_ADDRESS_PRIVATE_KEY} -faucet.minutes 1
+    command: -wallet.provider http://ethereum:8545 -wallet.privkey ${ALLOC_ADDRESS_PRIVATE_KEY} -faucet.minutes 1
     depends_on:
-      - geth
+      - ethereum
 
 networks:
   default:
