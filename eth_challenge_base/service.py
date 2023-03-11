@@ -7,7 +7,7 @@ from typing import Dict
 
 import pyseto
 from eth_typing import ChecksumAddress, HexStr
-from eth_utils import to_checksum_address, units
+from eth_utils import units
 from pyseto import Token
 from twirp import ctxkeys, errors
 from twirp.asgi import TwirpASGIApp
@@ -38,7 +38,6 @@ class ChallengeService(object):
             description=self._config.description,
             show_source=self._config.show_source,
             solved_event=self._config.solved_event,
-            deployed_addr=self._config.deployed_addr,
         )
 
     def NewPlayground(self, context, empty):
@@ -98,19 +97,14 @@ class ChallengeService(object):
         return challenge_pb2.Contract(address=contract_addr, tx_hash=tx_hash)
 
     def GetFlag(self, context, event):
-        if not self._config.deployed_addr:
-            account: Account = self._recoverAcctFromCtx(context)
-            nonce: int = account.nonce
-            if nonce == 0:
-                raise TwirpServerException(
-                    code=errors.Errors.FailedPrecondition,
-                    message="challenge contract has not yet been deployed",
-                )
-            contract_addr: ChecksumAddress = account.get_deployment_address(nonce - 1)
-        else:
-            contract_addr: ChecksumAddress = to_checksum_address(
-                self._config.deployed_addr
+        account: Account = self._recoverAcctFromCtx(context)
+        nonce: int = account.nonce
+        if nonce == 0:
+            raise TwirpServerException(
+                code=errors.Errors.FailedPrecondition,
+                message="challenge contract has not yet been deployed",
             )
+        contract_addr: ChecksumAddress = account.get_deployment_address(nonce - 1)
 
         if self._config.solved_event:
             if not event.HasField("tx_hash"):

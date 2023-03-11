@@ -33,21 +33,20 @@ class UserInterface:
         return len(self._actions)
 
     def _create_actions(self) -> List[Action]:
-        actions: List[Action] = []
-        if not self._info.deployed_addr:
-            actions = [
-                Action(
-                    "Create an account which will be used to deploy the challenge contract",
-                    self._handle_new_playground,
-                ),
-                Action(
-                    "Deploy the challenge contract using your generated account",
-                    self._handle_deploy_contract,
-                ),
-            ]
-        actions.append(
-            Action("Get your flag once you meet the requirement", self._handle_get_flag)
-        )
+        actions: List[Action] = [
+            Action(
+                "Create an account which will be used to deploy the challenge contract",
+                self._handle_new_playground,
+            ),
+            Action(
+                "Deploy the challenge contract using your generated account",
+                self._handle_deploy_contract,
+            ),
+            Action(
+                "Get your flag once you meet the requirement", self._handle_get_flag
+            ),
+        ]
+
         if self._info.show_source:
             actions.append(
                 Action("Show the contract source code", self._handle_get_sourcecode)
@@ -108,11 +107,8 @@ class UserInterface:
         print(f"[+] transaction hash: {response.tx_hash}")
 
     def _handle_get_flag(self) -> None:
-        context = Context()
-        if not self._info.deployed_addr:
-            token: str = input("[-] input your token: ").strip()
-            context.set_header(AUTHORIZATION_KEY, token)
-
+        token: str = input("[-] input your token: ").strip()
+        context = Context(headers={AUTHORIZATION_KEY: token})
         request = challenge_pb2.Event()
         if self._info.solved_event:
             tx_hash = input(

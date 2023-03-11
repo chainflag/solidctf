@@ -18,7 +18,6 @@ class Config:
     flag: str
     show_source: bool
     solved_event: str
-    deployed_addr: str
     constructor: Constructor
 
 
@@ -28,7 +27,6 @@ def parse_config(path: str) -> Config:
 
     show_source = config.get("show_source", True)
     solved_event = config.get("solved_event", "")
-    deployed_addr = config.get("deployed_addr", "")
     constructor = config.get("constructor", {})
     constructor_args = constructor.get("args", ())
     constructor_value = constructor.get("value", 0)
@@ -43,6 +41,5 @@ def parse_config(path: str) -> Config:
         config["flag"],
         show_source,
         solved_event,
-        deployed_addr,
         Constructor(tuple(constructor_args), constructor_value, constructor_gas),
     )
