@@ -6,7 +6,7 @@ from glob import glob
 from typing import Dict
 
 import pyseto
-from eth_typing import ChecksumAddress, HexStr
+from eth_typing import ChecksumAddress
 from eth_utils import units
 from pyseto import Token
 from twirp import ctxkeys, errors
@@ -15,7 +15,10 @@ from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerExcep
 
 from eth_challenge_base.config import Config, parse_config
 from eth_challenge_base.ethereum import Account, Contract
-from eth_challenge_base.protobuf import challenge_pb2, challenge_twirp
+from eth_challenge_base.protobuf import (  # type: ignore[attr-defined]
+    challenge_pb2,
+    challenge_twirp,
+)
 
 AUTHORIZATION_KEY = "authorization"
 
@@ -72,7 +75,7 @@ class ChallengeService:
 
     def DeployContract(self, context, empty):
         account: Account = self._recoverAcctFromCtx(context)
-        if account.balance() == 0:
+        if account.balance == 0:
             raise TwirpServerException(
                 code=errors.Errors.FailedPrecondition,
                 message=f"send test ether to {account.address} first",
@@ -121,7 +124,7 @@ class ChallengeService:
 
             try:
                 is_solved = self._contract.is_solved(
-                    contract_addr, self._config.solved_event, HexStr(tx_hash)
+                    contract_addr, self._config.solved_event, tx_hash
                 )
             except Exception as e:
                 raise TwirpServerException(
@@ -184,13 +187,13 @@ class ChallengeService:
                 code=errors.Errors.Unauthenticated, message=str(e)
             )
 
-        if self._config.contract != decoded_token.footer.decode("utf-8"):
+        if self._config.contract != decoded_token.footer.decode("utf-8"):  # type: ignore[union-attr]
             raise TwirpServerException(
                 code=errors.Errors.Unauthenticated,
                 message="token was not issued by this challenge",
             )
 
-        return Account(decoded_token.payload.decode("utf-8"))
+        return Account(decoded_token.payload.decode("utf-8"))  # type: ignore[union-attr]
 
 
 def create_asgi_application(project_root: str) -> TwirpASGIApp:

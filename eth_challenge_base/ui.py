@@ -8,7 +8,10 @@ from typing import Callable, List
 from twirp.context import Context
 from twirp.exceptions import TwirpServerException
 
-from eth_challenge_base.protobuf import challenge_pb2, challenge_twirp
+from eth_challenge_base.protobuf import (  # type: ignore[attr-defined]
+    challenge_pb2,
+    challenge_twirp,
+)
 from eth_challenge_base.service import AUTHORIZATION_KEY
 
 
@@ -68,11 +71,11 @@ class UserInterface:
             print(f"[{i + 1}] - {action.description}")
 
         while True:
-            choice = input("[-] input your choice: ")
-            if not choice.isdigit():
+            choice_input: str = input("[-] input your choice: ")
+            if not choice_input.isdigit():
                 print("please enter a number.")
                 continue
-            choice = int(choice) - 1
+            choice: int = int(choice_input) - 1
             if 0 <= choice < len(self._actions):
                 break
             print("invalid option, please try again.")
@@ -139,7 +142,9 @@ class Powser:
         )
 
     def __str__(self):
-        return f"sha256({ self._prefix } + ???).binary.endswith('{ '0' * self._difficulty }')"
+        return (
+            f"sha256({self._prefix} + ???).binary.endswith('{'0' * self._difficulty}')"
+        )
 
     def verify_hash(self, answer: str) -> bool:
         h = hashlib.sha256()

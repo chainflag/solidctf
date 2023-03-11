@@ -1,5 +1,6 @@
+import threading
 from functools import lru_cache
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import rlp
 from eth_typing import ChecksumAddress, HexStr
@@ -13,7 +14,8 @@ from web3.types import ABI
 
 
 class Account:
-    def __init__(self, private_key: Union[int, bytes, str] = None) -> None:
+    def __init__(self, private_key: Union[int, bytes, str, None] = None) -> None:
+        self._lock = threading.Lock()
         if private_key is None:
             w3account = web3.eth.account.create()
         else:
@@ -23,6 +25,7 @@ class Account:
         self.address = self._account.address
         self.private_key = HexBytes(self._account.key).hex()
 
+    @property
     def balance(self) -> int:
         balance = web3.eth.get_balance(self.address)
         return balance
@@ -42,14 +45,16 @@ class Account:
         return to_checksum_address(deployment_address)
 
     def transact(self, tx: Dict) -> str:
-        tx["chainId"] = web3.eth.chain_id
-        tx["from"] = self.address
-        tx["gasPrice"] = web3.eth.gas_price
-        if "nonce" not in tx.keys():
-            tx["nonce"] = self.nonce
+        with self._lock:
+            tx["chainId"] = web3.eth.chain_id
+            tx["from"] = self.address
+            tx["gasPrice"] = web3.eth.gas_price
+            if "nonce" not in tx.keys():
+                tx["nonce"] = self.nonce
 
-        signed_tx = self._account.sign_transaction(tx).rawTransaction
-        return web3.eth.send_raw_transaction(signed_tx).hex()
+            signed_tx = self._account.sign_transaction(tx).rawTransaction
+            tx_hash = web3.eth.send_raw_transaction(signed_tx).hex()
+        return tx_hash
 
 
 class Contract:
@@ -59,11 +64,14 @@ class Contract:
         self.deploy = ContractCreation(self)
 
     def is_solved(
-        self, address: ChecksumAddress, solved_event: str = None, tx_hash: HexStr = None
+        self,
+        address: ChecksumAddress,
+        solved_event: str = "",
+        tx_hash: str = "",
     ) -> bool:
         is_solved = False
         if solved_event:
-            tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
+            tx_receipt = web3.eth.get_transaction_receipt(HexStr(tx_hash))
             block_interval: int = web3.eth.block_number - tx_receipt["blockNumber"]
             if block_interval > 128:
                 raise ValidationError(
@@ -90,8 +98,8 @@ class Contract:
 
         return is_solved
 
-    def constructor(self, args: Optional[Any] = None) -> ContractConstructor:
-        return ContractConstructor(web3, self.abi, self.bytecode, *args)
+    def constructor(self, args: Optional[Tuple]) -> ContractConstructor:
+        return ContractConstructor(web3, self.abi, self.bytecode, *args)  # type: ignore[misc]
 
 
 class ContractCreation:
@@ -130,7 +138,8 @@ class ContractCreation:
         gas_limit: Optional[int] = None,
         args: Optional[Tuple] = None,
     ) -> int:
-        gas_limit: int = gas_limit or self._estimate_gas(ADDRESS_ZERO, value, args)
+        if not gas_limit:
+            gas_limit = self._estimate_gas(ADDRESS_ZERO, value, args)
         return value + gas_limit * web3.eth.gas_price
 
     def get_creation_code(

@@ -8,6 +8,7 @@ protoc:
 	docker cp protoc:/protobuf-builder/protobuf eth_challenge_base && docker rm protoc
 
 lint:
+	mypy .
 	black --check . --diff
 	flake8 --ignore=E501,W503 --show-source
 	isort --profile black . --check --diff
@@ -15,4 +16,3 @@ lint:
 format:
 	black .
 	isort --profile black .
-
