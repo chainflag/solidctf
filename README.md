@@ -43,11 +43,11 @@ docker-compose up -d
 ## Advance
 
 ### Use private PoA Ethereum network as challenge environment
-1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/eth-challenge-base/tree/main/geth).
+1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/eth-challenge-base/tree/main/fogeth).
 2. Keep the web3 provider defaults in the `.env` file.
 3. Run the docker container using the following command:
 ```bash
-docker run -d -p 20000:20000 --network geth_default --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
+docker run -d -p 20000:20000 --network fogeth_default --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
 ```
 
 ## Development
