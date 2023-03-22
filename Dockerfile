@@ -25,7 +25,7 @@ COPY client.py .
 COPY server.py .
 COPY example .
 COPY eth_challenge_base eth_challenge_base
-COPY --from=protoc /protobuf-builder/protobuf eth_challenge_base
+COPY --from=protoc /protobuf-builder/protobuf eth_challenge_base/protobuf
 
 COPY xinetd.sh /xinetd.sh
 COPY entrypoint.sh /entrypoint.sh
