@@ -1,11 +1,11 @@
-# eth-challenge-base
+# SolidCTF
 
-![Docker CI](https://img.shields.io/github/actions/workflow/status/chainflag/eth-challenge-base/docker-image.yml?branch=main)
-![Docker size](https://badgen.net/docker/size/chainflag/eth-challenge-base/latest?color=cyan)
-![Latest tag](https://badgen.net/github/tag/chainflag/eth-challenge-base)
-![License: MIT](https://badgen.net/github/license/chainflag/eth-challenge-base?color=yellow)
+![Docker CI](https://img.shields.io/github/actions/workflow/status/chainflag/solidctf/docker-image.yml?branch=main)
+![Docker size](https://badgen.net/docker/size/chainflag/solidctf/latest?color=cyan)
+![Latest tag](https://badgen.net/github/tag/chainflag/solidctf)
+![License: MIT](https://badgen.net/github/license/chainflag/solidctf?color=yellow)
 
-xinetd docker for building ethereum contract challenges in capture the flag (CTF).
+SolidCTF is an infrastructure solution that simplifies the build of Solidity Capture the Flag (CTF) challenges. It provides the ability to CTF organizers to rapidly set up a playable Solidity CTF environment, freeing them up to concentrate on designing smart contracts for puzzles.
 
 ## Getting Started
 
@@ -20,8 +20,8 @@ nc 127.0.0.1 20000
 
 ## Usage
 
-### Create challenge project based on [example](https://github.com/chainflag/eth-challenge-base/tree/main/example)
-* The `contracts` directory is where you should code the challenge contract, specifically, you need to implement [isSolved()](https://github.com/chainflag/eth-challenge-base/blob/main/example/contracts/Example.sol#L18) function to check if it is solved.
+### Create challenge project based on [example](https://github.com/chainflag/solidctf/tree/main/example)
+* The `contracts` directory is where you should code the challenge contract, specifically, you need to implement [isSolved()](https://github.com/chainflag/solidctf/blob/main/example/contracts/Example.sol#L18) function to check if it is solved.
 * The `challenge.yml` file is the config for specifying challenge description, flag, contract name, constructor, gas limit etc. Refer to the comments in this file for more details.
 * The `.env` file is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty.
 
@@ -43,7 +43,7 @@ docker-compose up -d
 ## Advance
 
 ### Use private PoA Ethereum network as challenge environment
-1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/eth-challenge-base/tree/main/fogeth).
+1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/solidctf/tree/main/fogeth).
 2. Keep the web3 provider defaults in the `.env` file.
 3. Run the docker container using the following command:
 ```bash

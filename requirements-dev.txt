@@ -8,12 +8,24 @@ black==23.1.0
     # via -r requirements-dev.in
 build==0.10.0
     # via pip-tools
+certifi==2022.12.7
+    # via requests
+charset-normalizer==3.1.0
+    # via requests
 click==8.1.3
     # via
     #   black
     #   pip-tools
+docutils==0.19
+    # via flit
 flake8==6.0.0
     # via -r requirements-dev.in
+flit==3.8.0
+    # via -r requirements-dev.in
+flit-core==3.8.0
+    # via flit
+idna==3.4
+    # via requests
 isort==5.12.0
     # via -r requirements-dev.in
 mccabe==0.7.0
@@ -40,15 +52,21 @@ pyflakes==3.0.1
     # via flake8
 pyproject-hooks==1.0.0
     # via build
+requests==2.28.2
+    # via flit
 tomli==2.0.1
     # via
     #   black
     #   build
     #   mypy
+tomli-w==1.0.0
+    # via flit
 typing-extensions==4.4.0
     # via
     #   black
     #   mypy
+urllib3==1.26.15
+    # via requests
 wheel==0.38.4
     # via pip-tools
 

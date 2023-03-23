@@ -1,13 +1,13 @@
 # Fogeth
-Fogeth is a private PoA Ethereum environment tailored for CTF Challenges. It restricts access to only whitelisted RPC methods and cleans transaction data from `eth_getBlockByHash` and `eth_getBlockByNumber` responses. This prevents players from searching through blockchain history to find and copy others' transactions and solutions, thereby ensuring fairness in CTF challenges.
+Fogeth is a private PoA Ethereum environment tailored for CTF challenges. It restricts access to only whitelisted RPC methods and cleans transaction data from `eth_getBlockByHash` and `eth_getBlockByNumber` responses. This prevents players from searching through blockchain history to find and copy others' transactions and solutions, thereby ensuring fairness in CTF challenges.
 
 ## Usage
 
 ### Clone the Repository
 
 ```
-git clone https://github.com/chainflag/eth-challenge-base.git
-cd eth-challenge-base/fogeth
+git clone https://github.com/chainflag/solidctf.git
+cd solidctf/fogeth
 ```
 
 ### Configure the Node

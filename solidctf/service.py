@@ -13,9 +13,9 @@ from twirp import ctxkeys, errors
 from twirp.asgi import TwirpASGIApp
 from twirp.exceptions import InvalidArgument, RequiredArgument, TwirpServerException
 
-from eth_challenge_base.config import Config, parse_config
-from eth_challenge_base.ethereum import Account, Contract
-from eth_challenge_base.protobuf import (  # type: ignore[attr-defined]
+from solidctf.config import Config, parse_config
+from solidctf.ethereum import Account, Contract
+from solidctf.protobuf import (  # type: ignore[attr-defined]
     challenge_pb2,
     challenge_twirp,
 )

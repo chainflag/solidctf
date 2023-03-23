@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-package chainflag.ctf.challenge;
-option go_package = "challenge";
+package chainflag.solidctf;
 
 message Info {
   string description = 1;

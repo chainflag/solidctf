@@ -6,7 +6,7 @@ RUN apt update && apt install unzip
 RUN go install github.com/verloop/twirpy/protoc-gen-twirpy@latest
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.5/protoc-3.19.5-linux-x86_64.zip && unzip protoc-3.19.5-linux-x86_64.zip && cp bin/protoc /bin/protoc
 
-COPY eth_challenge_base/protobuf protobuf
+COPY solidctf/protobuf protobuf
 RUN protoc --python_out=. --twirpy_out=. protobuf/challenge.proto
 
 FROM python:3.10-slim-buster
@@ -24,8 +24,8 @@ RUN pip install -r requirements.txt
 COPY client.py .
 COPY server.py .
 COPY example .
-COPY eth_challenge_base eth_challenge_base
-COPY --from=protoc /protobuf-builder/protobuf eth_challenge_base/protobuf
+COPY solidctf solidctf
+COPY --from=protoc /protobuf-builder/protobuf solidctf/protobuf
 
 COPY xinetd.sh /xinetd.sh
 COPY entrypoint.sh /entrypoint.sh
