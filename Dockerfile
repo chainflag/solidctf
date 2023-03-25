@@ -11,7 +11,7 @@ RUN protoc --python_out=. --twirpy_out=. protobuf/challenge.proto
 
 FROM python:3.10-slim-buster
 
-WORKDIR /home/ctf
+WORKDIR /ctf
 
 RUN apt update \
     && apt install -y --no-install-recommends build-essential tini xinetd \
