@@ -8,6 +8,7 @@ GETH_KEYSTORE_DIR=$GETH_DATA_DIR/keystore
 CHAIN_ID="${CHAIN_ID:-$((RANDOM + 10000))}"
 
 [ -f "$GETH_DATA_DIR/alloc-address" ] && ALLOC_ADDRESS_WITHOUT_0X=$(cat "$GETH_DATA_DIR/alloc-address")
+[ ! -d "$GETH_DATA_DIR" ] && mkdir "$GETH_DATA_DIR"
 
 if [ ! -d "$GETH_KEYSTORE_DIR" ]; then
     echo "$GETH_KEYSTORE_DIR missing, running account import"
