@@ -23,8 +23,9 @@ RUN pip install -r requirements.txt
 
 COPY client.py .
 COPY server.py .
-COPY example .
 COPY solidctf solidctf
+COPY example/contracts contracts
+COPY example/challenge.yml challenge.yml
 COPY --from=protoc /protobuf-builder/protobuf solidctf/protobuf
 
 COPY xinetd.sh /xinetd.sh
