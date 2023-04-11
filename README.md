@@ -14,41 +14,17 @@ SolidCTF is an infrastructure solution that simplifies the build of Solidity Cap
 Use the following command to run a quick demo:
 
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://rpc.sepolia.org chainflag/eth-challenge-base
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://rpc.sepolia.org chainflag/solidctf
 nc 127.0.0.1 20000
 ```
 
-## Usage
+### Usage
 
-### Create challenge project based on [example](https://github.com/chainflag/solidctf/tree/main/example)
-* The `contracts` directory is where you should code the challenge contract, specifically, you need to implement [isSolved()](https://github.com/chainflag/solidctf/blob/main/example/contracts/Example.sol#L18) function to check if it is solved.
-* The `challenge.yml` file is the config for specifying challenge description, flag, contract name, constructor, gas limit etc. Refer to the comments in this file for more details.
-* The `.env` file is used to set environment variables of docker container, including web3 provider, token secret and proof of work difficulty.
-
->You can build multi-contract challenges by deploying contracts in a setup contract's constructor
-
-### Start serving your contract challenge
-
-Use the following command to start serving the contract challenge:
-```bash
-docker run -d -p 20000:20000 --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
-```
-
-Alternatively, you can use docker-compose:
-
-```bash
-docker-compose up -d
-```
-
-## Advance
-
-### Use private PoA Ethereum network as challenge environment
-1. Launch an anti-plagiarism PoA network by following the instructions [here](https://github.com/chainflag/solidctf/tree/main/fogeth).
-2. Keep the web3 provider defaults in the `.env` file.
-3. Run the docker container using the following command:
-```bash
-docker run -d -p 20000:20000 --network fogeth_default --env-file .env -v `pwd`/contracts:/home/ctf/contracts -v `pwd`/challenge.yml:/home/ctf/challenge.yml chainflag/eth-challenge-base:0.9.3
-```
+1. Clone the [solidity-ctf-template](https://github.com/chainflag/solidity-ctf-template) using `git clone git@github.com:chainflag/solidity-ctf-template.git` command to create a new challenge project.
+2. Open the contract directory and code your challenge contract that contains the [isSolved()](https://github.com/chainflag/solidity-ctf-template/blob/main/contracts/Example.sol#L19) to replace the example contract. For the multi-contract challenges, you can deploy them in a setup contract's constructor.
+3. Edit the [challenge.yml](https://github.com/chainflag/solidity-ctf-template/blob/main/challenge.yml) to configure your challenge. See to the comments in this file for more details on how to configure it.
+4. Place your flag in the file [flag.txt](https://github.com/chainflag/solidity-ctf-template/blob/main/flag.txt) file and change the alloc address private key in the [.env](https://github.com/chainflag/solidity-ctf-template/blob/main/.env) to your own.
+5. Run the `docker-compose pull && docker-compose up -d` command to start serving your challenge.
 
 ## Development
 
@@ -61,7 +37,14 @@ Before you start, make sure you have the following installed:
 * Required packages (`pip install -r requirements.txt`)
 
 ### Run in development mode
-1. Generate protobuf code and run server
+1. Clone the repository
+
+```bash
+git clone git@github.com:chainflag/solidctf.git
+git submodule update --init --recursive
+```
+
+2. Generate protobuf code and run server
 
 ```bash
 make protoc
@@ -69,7 +52,7 @@ export WEB3_PROVIDER_URI="your web3 provider"
 make dev
 ```
 
-2. Open another terminal to run client
+3. Open another terminal to run client
 
 ```bash
 python client.py
