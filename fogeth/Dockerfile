@@ -7,7 +7,7 @@ COPY genesis.json.template /genesis.json.template
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY --from=ethereum/client-go:v1.10.17 /usr/local/bin/geth /usr/local/bin/
+COPY --from=ethereum/client-go:v1.10.26 /usr/local/bin/geth /usr/local/bin/
 
 EXPOSE 8545
 
