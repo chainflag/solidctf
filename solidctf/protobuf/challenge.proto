@@ -6,7 +6,6 @@ message Info {
   string description = 1;
   bool show_source = 2;
   string solved_event = 3;
-  string deployed_addr = 4;
 }
 
 message Playground {
