@@ -25,7 +25,7 @@ message Flag {
 }
 
 message Event {
-  optional string tx_hash = 1;
+  string tx_hash = 1;
 }
 
 message SourceCode {
