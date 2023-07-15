@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Solidity CTF Challenge</title>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js"></script>
+  <script src="https://unpkg.com/highlightjs-solidity@2.0.6/dist/solidity.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="bundle.js"></script>
+  <link href="https://unpkg.com/highlight.js@11.8.0/styles/atom-one-dark.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="content">
+    <div class="card">
+      <h1>Public Information</h1>
+      <li>8545: Geth RPC (Support Remix/Metamask)</li>
+      <li>8080: Fauect Server</li>
+      <p>Challenge Description</p>
+      <div id="challenge-description">Error! Please Contract Admin</div>
+    </div>
+
+    <div class="card">
+      <p id="challenge-status"></p>
+    </div>
+
+    <div id="target-element"></div>
+
+    <div class="card">
+      <div class="input-group">
+        <input type="text" id="input-text" placeholder="solve transaction hash (0x..)">
+      </div>
+      <div class="button-container">
+        <div class="input-group my-button">
+          <button onclick="submit_tx()">Get Flag</button>
+        </div>
+        <div id="restart" class="input-group danger my-button">
+          <button onclick="clean_local()">Restart Environment</button>
+        </div>
+      </div>
+      <div>
+        <p id="flag-placeholder"></p>
+      </div>
+    </div>
+  </div>
+  <script src="browser-client.js"></script>
+</body>
+</html>
