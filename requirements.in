@@ -5,6 +5,7 @@ pyseto>=1.7.0,<2
 pyyaml>=5.4.0,<6
 types-PyYAML>=6
 rlp<3
+starlette>=0.30.0
 twirp>=0.0.7
 uvicorn>=0.20.0
 web3>=5.31.3,<6
