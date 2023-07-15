@@ -1,0 +1,20 @@
+{
+  "name": "solidctf",
+  "version": "1.0.0",
+  "type": "module",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build",
+    "protoc": "twirpscript",
+    "prettier": "prettier --write 'src/**/*.{css,html,js}'"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.9.3",
+    "prettier": "^3.0.0"
+  },
+  "dependencies": {
+    "twirpscript": "^0.0.66"
+  }
+}
