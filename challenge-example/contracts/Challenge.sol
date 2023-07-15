@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: UNLICENSED
 
 pragma solidity ^0.8.12;
 
@@ -7,6 +7,7 @@ contract Challenge {
     mapping(address => bool) public betted;
     mapping(address => uint) public win_counts;
     event SendFlag(address);
+    bool public isSolved;
 
     constructor () {}
 
@@ -24,5 +25,6 @@ contract Challenge {
         require(win_counts[msg.sender] >= 10, "Not enough wins .");
         success[msg.sender] = true;
         emit SendFlag(msg.sender);
+        isSolved = true;
     }
 }
