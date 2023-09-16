@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
-    entry: './client.js',
+    entry: './src/pb.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'src'),
         filename: 'bundle.js',
         libraryTarget: 'umd',
         library: 'pb',

@@ -16,7 +16,7 @@ WORKDIR /frontend-build
 COPY web/package.json web/yarn.lock ./
 RUN yarn install
 
-COPY web/bundle .
+COPY web ./
 COPY solidctf/protobuf/challenge.proto .
 
 RUN apk add --no-cache protoc
@@ -33,11 +33,9 @@ COPY server.py .
 COPY solidctf solidctf
 COPY example/contracts contracts
 COPY example/challenge.yml challenge.yml
-COPY web/src/* web/dist/
-COPY web/assets/* web/dist/
 
 COPY --from=protoc /protobuf-build/protobuf solidctf/protobuf
-COPY --from=frontend /frontend-build/dist web/dist
+COPY --from=frontend /frontend-build/src web/dist
 
 COPY entrypoint.sh /entrypoint.sh
 RUN mkdir /var/log/ctf

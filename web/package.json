@@ -2,7 +2,6 @@
   "name": "solidctf",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve --config bundle/webpack.config.js --open",
     "build": "webpack",
     "protoc": "twirpscript",
     "prettier": "prettier --write 'src/**/*.{css,html,js}'"
@@ -13,7 +12,6 @@
   },
   "devDependencies": {
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-cli": "^5.1.4"
   }
 }
