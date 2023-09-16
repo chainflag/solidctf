@@ -22,7 +22,7 @@ COPY solidctf/protobuf/challenge.proto .
 RUN apk add --no-cache protoc
 RUN yarn protoc && yarn build
 
-FROM python:3.10-slim-buster
+FROM python:3.9-slim-buster
 
 WORKDIR /ctf
 
