@@ -16,7 +16,7 @@ WORKDIR /frontend-build
 COPY web/package.json web/yarn.lock ./
 RUN yarn install
 
-COPY web ./
+COPY web/bundle .
 COPY solidctf/protobuf/challenge.proto .
 
 RUN apk add --no-cache protoc

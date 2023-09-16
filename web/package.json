@@ -1,10 +1,9 @@
 {
   "name": "solidctf",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "build": "webpack --config bundle/webpack.config.js",
     "start": "webpack serve --config bundle/webpack.config.js --open",
+    "build": "webpack",
     "protoc": "twirpscript",
     "prettier": "prettier --write 'src/**/*.{css,html,js}'"
   },
