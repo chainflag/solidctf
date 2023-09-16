@@ -9,7 +9,7 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.5/p
 COPY solidctf/protobuf protobuf
 RUN protoc --python_out=. --twirpy_out=. protobuf/challenge.proto
 
-FROM python:3.10-slim-buster
+FROM python:3.9-slim-buster
 
 WORKDIR /ctf
 
