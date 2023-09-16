@@ -2,13 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Solidity CTF Challenge</title>
-    <script src="bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js"></script>
-    <script src="https://unpkg.com/highlightjs-solidity@2.0.6/dist/solidity.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <title>Solid CTF Challenge</title>
     <link
       href="https://unpkg.com/highlight.js@11.8.0/styles/atom-one-dark.css"
       rel="stylesheet"
@@ -22,9 +16,6 @@
   <body>
     <div class="content">
       <div class="card">
-        <h1>Public Information</h1>
-        <li>8545: Geth RPC (Support Remix/Metamask)</li>
-        <li>8080: Fauect Server</li>
         <p>Challenge Description</p>
         <div id="challenge-description">Error! Please Contract Admin</div>
       </div>
@@ -45,10 +36,17 @@
         </div>
         <div class="button-container">
           <div class="input-group my-button">
-            <button onclick="submit_tx()">Get Flag</button>
+            <button id="get-flag">Get Flag</button>
           </div>
           <div id="restart" class="input-group danger my-button">
-            <button onclick="clean_local()">Restart Environment</button>
+            <button
+              onclick="(function() {
+              localStorage.clear();
+              window.location.reload();
+            })()"
+            >
+              Restart Environment
+            </button>
           </div>
         </div>
         <div>
@@ -56,6 +54,5 @@
         </div>
       </div>
     </div>
-    <script src="client.js"></script>
   </body>
 </html>
