@@ -35,7 +35,7 @@ COPY example/contracts contracts
 COPY example/challenge.yml challenge.yml
 
 COPY --from=protoc /protobuf-build/protobuf solidctf/protobuf
-COPY --from=frontend /frontend-build/src web/dist
+COPY --from=frontend /frontend-build/src web/src
 
 COPY entrypoint.sh /entrypoint.sh
 RUN mkdir /var/log/ctf

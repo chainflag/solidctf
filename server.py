@@ -12,7 +12,7 @@ if os.environ.get("DEBUG_MODE", False):
 
 routes = [
     Mount("/api", app=create_asgi_application(project_root)),
-    Mount("/", app=StaticFiles(directory="web/dist", html=True)),
+    Mount("/", app=StaticFiles(directory="web/src", html=True)),
 ]
 
 app = Starlette(routes=routes)
