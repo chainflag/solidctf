@@ -1,6 +1,17 @@
 #!/bin/bash
 
-if ! python3 -c "from brownie import project; project.load('.')"; then
+read -r -d '' COMPILE <<-'EOF'
+import os
+from brownie import project
+from solcx import install
+default = os.getenv(
+    "SOLC_DOWNLOAD_BASE", "https://cdn.jsdelivr.net/gh/ethereum/solc-bin@latest"
+).rstrip("/")
+install.BINARY_DOWNLOAD_BASE = default + "/{}-amd64/{}"
+project.load(".")
+EOF
+
+if ! python3 -c "$COMPILE"; then
   exit 1
 fi
 

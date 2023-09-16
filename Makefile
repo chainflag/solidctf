@@ -7,9 +7,6 @@ protoc:
 	docker run --name protoc protoc
 	docker cp protoc:/protobuf-build/protobuf solidctf && docker rm protoc
 
-webpack:
-	docker build --target webpack -t webpack --platform linux/amd64 .
-
 lint:
 	mypy .
 	black --check . --diff
