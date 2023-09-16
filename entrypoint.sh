@@ -2,8 +2,10 @@
 
 read -r -d '' COMPILE <<-'EOF'
 import os
+
 from brownie import project
 from solcx import install
+
 default = os.getenv(
     "SOLC_DOWNLOAD_BASE", "https://cdn.jsdelivr.net/gh/ethereum/solc-bin@latest"
 ).rstrip("/")
