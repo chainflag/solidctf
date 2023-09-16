@@ -5,7 +5,7 @@ if ! python3 -c "from brownie import project; project.load('.')"; then
 fi
 
 gunicorn server:app \
-  --bind "${HTTP_HOST:-127.0.0.1}":8000 \
+  --bind "${HTTP_HOST:-0.0.0.0}":8000 \
   --preload \
   --workers 4 \
   --worker-class uvicorn.workers.UvicornWorker \

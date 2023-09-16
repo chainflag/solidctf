@@ -1,7 +1,7 @@
-pb.GetChallengeInfo().then(res => {
+pb.GetChallengeInfo({},{prefix:"/api/twirp"}).then(res => {
     $('#challenge-description').text(res.description);
     if (res.showSource == true) {
-        pb.GetSourceCode().then(res => {
+        pb.GetSourceCode({},{prefix:"/api/twirp"}).then(res => {
             for (const filename in res.source) {
                 var content = res.source[filename];
                 var card = $('<div>');
@@ -25,7 +25,7 @@ pb.GetChallengeInfo().then(res => {
 });
 
 if (localStorage.getItem('token') === null) {
-    pb.NewPlayground().then(res => {
+    pb.NewPlayground({},{prefix:"/api/twirp"}).then(res => {
         localStorage.setItem('token', res.token);
         var msg = `please transfer more than ${res.value.toFixed(3)} test ether to the deployer account ${res.address} for next step`
         $('#challenge-status').text(msg);
@@ -33,7 +33,7 @@ if (localStorage.getItem('token') === null) {
 } else {
     var token = localStorage.getItem('token');
     if (localStorage.getItem('target') === null) {
-        pb.DeployContract({}, { headers: { authorization: token } })
+        pb.DeployContract({}, { headers: { authorization: token }, prefix: "/api/twirp" })
         .then(res => {
             var target = res.address;
             localStorage.setItem('target', target);
@@ -51,7 +51,7 @@ if (localStorage.getItem('token') === null) {
 
 function submit_tx() {
     var solve_tx_hash = document.getElementById('input-text').value;
-    pb.GetFlag({ txHash: solve_tx_hash }, { headers: { authorization: token } })
+    pb.GetFlag({ txHash: solve_tx_hash }, { headers: { authorization: token }, prefix: "/api/twirp" })
     .then(res => {
         console.log(res);
         if ('flag' in res) {

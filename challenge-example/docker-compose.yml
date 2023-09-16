@@ -7,7 +7,7 @@ services:
         - "chainflag/solidctf:latest"
     restart: unless-stopped
     ports:
-      - "20000:80"
+      - "20000:8000"
     env_file:
       - .env
     volumes:
