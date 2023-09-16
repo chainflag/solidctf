@@ -2,19 +2,19 @@
   "name": "solidctf",
   "version": "1.0.0",
   "type": "module",
-  "source": "src/index.html",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build",
+    "build": "webpack --config bundle/webpack.config.js",
+    "start": "webpack serve --config bundle/webpack.config.js --open",
     "protoc": "twirpscript",
     "prettier": "prettier --write 'src/**/*.{css,html,js}'"
   },
   "license": "MIT",
-  "devDependencies": {
-    "parcel": "^2.9.3",
-    "prettier": "^3.0.0"
-  },
   "dependencies": {
-    "twirpscript": "^0.0.66"
+    "twirpscript": "^0.0.68"
+  },
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   }
 }
