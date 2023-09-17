@@ -6,6 +6,7 @@
 #
 aiohttp==3.8.3
     # via
+    #   -r requirements.in
     #   eth-brownie
     #   web3
 aiosignal==1.2.0
