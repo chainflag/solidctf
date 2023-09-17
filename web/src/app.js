@@ -16,6 +16,14 @@ import '../assets/style.css';
 const API_PREFIX = '/api/twirp';
 client.prefix = API_PREFIX;
 
+client.use((context, next) => {
+  const auth = localStorage.getItem('auth');
+  if (auth) {
+    context.headers['authorization'] = auth;
+  }
+  return next(context);
+});
+
 hljsDefineSolidity(hljs);
 hljs.initHighlightingOnLoad();
 
@@ -36,11 +44,10 @@ $(document).ready(async function () {
     $('#challenge-status').text(`API error: ${err.msg}`);
   }
 
-  let token = localStorage.getItem('token');
-  if (!token) {
+  if (!localStorage.getItem('auth')) {
     try {
       const startRes = await NewPlayground({});
-      localStorage.setItem('token', startRes.token);
+      localStorage.setItem('auth', startRes.token);
       const msg = `please transfer more than ${startRes.value.toFixed(
         3
       )} test ether to the deployer account ${startRes.address} for next step`;
@@ -55,10 +62,7 @@ $(document).ready(async function () {
 
   if (!localStorage.getItem('target')) {
     try {
-      const deployRes = await DeployContract(
-        {},
-        { headers: { authorization: token } }
-      );
+      const deployRes = await DeployContract({});
       const target = deployRes.address;
       localStorage.setItem('target', target);
       $('#challenge-status').text('please solve the contrat @' + target);
@@ -93,14 +97,10 @@ function displaySource(source) {
   hljs.highlightAll();
 }
 
-function getFlag() {
+async function getFlag() {
   try {
     const solve_tx_hash = document.getElementById('input-text').value;
-    const token = localStorage.getItem('token');
-    const res = GetFlag(
-      { txHash: solve_tx_hash },
-      { headers: { authorization: token } }
-    );
+    const res = await GetFlag({txHash: solve_tx_hash});
     console.log(res);
     if ('flag' in res) {
       $('#flag-placeholder').text(`🥰🥰🥰 ${res.flag}`);
