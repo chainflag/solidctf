@@ -32,7 +32,6 @@ RUN pip install -r requirements.txt
 COPY server.py .
 COPY solidctf solidctf
 COPY example/contracts contracts
-COPY example/build build
 COPY example/challenge.yml challenge.yml
 
 COPY --from=protoc /protobuf-build/protobuf solidctf/protobuf
