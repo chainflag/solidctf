@@ -1,0 +1,22 @@
+{
+  "name": "solidctf",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "twirpscript && webpack",
+    "prettier": "prettier --write 'src/**/*.{css,html,js}'"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "highlight.js": "^11.8.0",
+    "highlightjs-solidity": "^2.0.6",
+    "jquery": "^3.7.1",
+    "twirpscript": "^0.0.68"
+  },
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.3",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}

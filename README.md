@@ -14,7 +14,7 @@ SolidCTF is an infrastructure solution that simplifies the build of Solidity Cap
 Use the following command to run a quick demo:
 
 ```bash
-docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://rpc.sepolia.org chainflag/solidctf
+docker run -it -p 20000:20000 -e WEB3_PROVIDER_URI=https://rpc.sepolia.org chainflag/solidctf:1.0
 nc 127.0.0.1 20000
 ```
 
@@ -50,12 +50,6 @@ git submodule update --init --recursive
 make protoc
 export WEB3_PROVIDER_URI="your web3 provider"
 make dev
-```
-
-3. Open another terminal to run client
-
-```bash
-python client.py
 ```
 
 ### Format python source

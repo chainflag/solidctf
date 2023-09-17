@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Solid CTF Challenge</title>
+    <link
+      href="https://unpkg.com/highlight.js@11.8.0/styles/atom-one-dark.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="card">
+        <p>Challenge Description</p>
+        <div id="challenge-description">Error! Please Contract Admin</div>
+      </div>
+
+      <div class="card">
+        <p id="challenge-status"></p>
+      </div>
+
+      <div id="target-element"></div>
+
+      <div class="card">
+        <div class="input-group">
+          <input
+            type="text"
+            id="input-text"
+            placeholder="solve transaction hash (0x..)"
+          />
+        </div>
+        <div class="button-container">
+          <div class="input-group my-button">
+            <button id="get-flag">Get Flag</button>
+          </div>
+          <div id="restart" class="input-group danger my-button">
+            <button
+              onclick="(function() {
+              localStorage.clear();
+              window.location.reload();
+            })()"
+            >
+              Restart Environment
+            </button>
+          </div>
+        </div>
+        <div>
+          <p id="flag-placeholder"></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
