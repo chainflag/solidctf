@@ -22,7 +22,7 @@ hljs.initHighlightingOnLoad();
 $(document).ready(async function () {
   try {
     const infoRes = await GetChallengeInfo({});
-    $('#challenge-description').text(res.description);
+    $('#challenge-description').text(infoRes.description);
 
     if (infoRes.solvedEvent.length === 0) {
       $('#input-text').hide();
@@ -39,7 +39,7 @@ $(document).ready(async function () {
   let token = localStorage.getItem('token');
   if (!token) {
     try {
-      const startRes = NewPlayground({});
+      const startRes = await NewPlayground({});
       localStorage.setItem('token', startRes.token);
       const msg = `please transfer more than ${startRes.value.toFixed(
         3

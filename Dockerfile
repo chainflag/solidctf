@@ -20,7 +20,7 @@ COPY web ./
 COPY solidctf/protobuf/challenge.proto .
 
 RUN apk add --no-cache protoc
-RUN yarn protoc && yarn build
+RUN yarn build
 
 FROM python:3.9-slim-buster
 
@@ -32,6 +32,7 @@ RUN pip install -r requirements.txt
 COPY server.py .
 COPY solidctf solidctf
 COPY example/contracts contracts
+COPY example/build build
 COPY example/challenge.yml challenge.yml
 
 COPY --from=protoc /protobuf-build/protobuf solidctf/protobuf

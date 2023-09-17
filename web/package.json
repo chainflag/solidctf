@@ -2,8 +2,7 @@
   "name": "solidctf",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack",
-    "protoc": "twirpscript",
+    "build": "twirpscript && webpack",
     "prettier": "prettier --write 'src/**/*.{css,html,js}'"
   },
   "license": "MIT",
